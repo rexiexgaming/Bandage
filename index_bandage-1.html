@@ -1,0 +1,1208 @@
+<!DOCTYPE html><html lang="ar" dir="ltr"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#ffffff">
+<title>bandage</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8f9fa; color: #212529; }
+
+  :root {
+    --teal: #0e8c7f;
+    --teal-dark: #0a6e63;
+    --teal-light: #f0f9f8;
+    --red: #dc3545;
+    --border: #dee2e6;
+    --text-muted: #6c757d;
+    --bg-light: #f8f9fa;
+    --card-bg: #ffffff;
+  }
+
+  .navbar {
+    background: #ffffff; color: #212529;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px; height: 56px; position: sticky; top: 0; z-index: 100;
+    border-bottom: 1px solid var(--border);
+  }
+  .navbar-brand { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 700; color: #212529; }
+  .navbar-right { display: flex; align-items: center; gap: 12px; }
+  .btn-logout { background: var(--red); color: #fff; border: none; border-radius: 4px; padding: 6px 14px; font-size: 13px; cursor: pointer; font-weight: 600; }
+  .btn-logout:hover { background: #bd2130; }
+
+  .page-header-bar {
+    background: #ffffff;
+    color: #212529;
+    padding: 16px 24px;
+    font-size: 16px;
+    font-weight: 700;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+  }
+
+  .layout { display: flex; min-height: calc(100vh - 56px); }
+  .sidebar { width: 240px; background: #212529; color: #fff; flex-shrink: 0; border-right: 1px solid var(--border); }
+  .sidebar-item { display: flex; align-items: center; gap: 10px; padding: 16px 20px; font-size: 14px; cursor: pointer; color: #dee2e6; border-left: 3px solid transparent; }
+  .sidebar-item.active, .sidebar-item:hover { background: rgba(255,255,255,0.05); color: #fff; border-left-color: var(--teal); }
+  .main { flex: 1; padding: 32px; background: var(--bg-light); overflow-y: auto; }
+
+  .card { background: var(--card-bg); border-radius: 6px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+  .card-header { background: #ffffff; color: var(--teal); border-bottom: 1px solid var(--border); padding: 16px 20px; font-size: 15px; font-weight: 700; text-align: left; }
+  .card-body { padding: 24px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; background: var(--card-bg); }
+  thead th { background: #f1f3f5; color: #495057; font-weight: 600; text-align: left; padding: 12px 16px; border-bottom: 2px solid var(--border); }
+  tbody td { padding: 14px 16px; border-bottom: 1px solid var(--border); color: #212529; vertical-align: middle; }
+
+  .btn { border: none; border-radius: 4px; padding: 10px 24px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all .15s ease-in-out; }
+  .btn-teal { background: var(--teal); color: #fff; }
+  .btn-teal:hover { background: var(--teal-dark); }
+  .btn-outline { background: #fff; color: var(--teal); border: 1px solid var(--teal); }
+  .btn-outline:hover { background: var(--teal-light); }
+  .btn-sm { padding: 6px 14px; font-size: 13px; }
+  .btn-red { background: var(--red); color: #fff; }
+  .btn-red:hover { background: #bd2130; }
+
+  .badge { display: inline-block; background: var(--teal-light); color: var(--teal); border: 1px solid #bbeeeb; font-size: 11px; font-weight: 700; border-radius: 4px; padding: 2px 8px; margin-left: 6px; }
+
+  .candidate-table td { padding: 14px 20px; border: 1px solid var(--border); background: var(--card-bg); }
+  .candidate-table .label { color: #495057; background: #f1f3f5; font-weight: 600; font-size: 13.5px; width: 15%; }
+
+  .tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+  .tab { padding: 12px 20px; font-size: 13.5px; font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; color: var(--text-muted); }
+  .tab.active { border-bottom-color: var(--teal); color: var(--teal); }
+
+  .alert { padding: 14px 16px; border-radius: 4px; font-size: 13.5px; border: 1px solid var(--border); background: #ffffff; color: #495057; }
+
+  .exam-layout { display: flex; height: calc(100vh - 56px); }
+  .exam-main { flex: 1; padding: 28px; overflow-y: auto; background: var(--bg-light); }
+  .exam-sidebar { width: 280px; border-left: 1px solid var(--border); background: #fff; display: flex; flex-direction: column; overflow-y: auto; }
+  .font-btns { display: flex; gap: 6px; margin-bottom: 20px; }
+  .font-btn { background: #fff; border: 1px solid var(--border); border-radius: 4px; padding: 4px 12px; cursor: pointer; font-weight: 600; font-size: 13px; }
+  .font-btn:hover { border-color: var(--teal); color: var(--teal); }
+  
+  .question-text { font-size: 16px; line-height: 1.8; margin-bottom: 24px; padding: 24px; background: #fff; border-radius: 6px; border: 1px solid var(--border); position: relative; overflow: hidden; }
+  .watermark { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 22px; color: rgba(14, 140, 127, 0.03); font-weight: 900; pointer-events: none; white-space: nowrap; transform: rotate(-15deg); user-select: none; }
+  
+  .options label { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 1px solid var(--border); border-radius: 6px; margin-bottom: 12px; cursor: pointer; font-size: 14.5px; background: #fff; transition: all 0.1s ease; }
+  .options label:hover { background: var(--teal-light); border-color: var(--teal); }
+  .exam-footer { display: flex; align-items: center; gap: 16px; margin-top: 24px; }
+  .mark-review { display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; color: #495057; }
+
+  .sidebar-info { padding: 16px; border-bottom: 1px solid var(--border); font-size: 13px; color: #333; line-height: 1.5; }
+  .stats-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .stat-pill { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: #495057; }
+  .stat-dot { width: 24px; height: 24px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #fff; font-weight: 700; }
+  .dot-green { background: #218838; }
+  .dot-red { background: #c82333; }
+  .dot-gray { background: #6c757d; }
+  
+  .q-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; padding: 16px; max-height: 320px; overflow-y: auto; background: #f8f9fa; border-bottom: 1px solid var(--border); }
+  .q-num { width: 34px; height: 34px; border-radius: 4px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; font-weight: 600; background: #fff; color: #495057; }
+  .q-num.current { background: var(--red); color: #fff; border-color: var(--red); }
+  .q-num.answered { background: #218838; color: #fff; border-color: #218838; }
+  .q-num.marked { background: #ffc107; color: #212529; border-color: #ffc107; }
+  
+  .sidebar-btns { display: flex; padding: 12px; gap: 6px; border-top: 1px solid var(--border); margin-top: auto; background: #fff; }
+  .sidebar-btns .btn { flex: 1; font-size: 12px; padding: 8px 4px; border-radius: 4px; }
+
+  .timer-box { padding: 16px; text-align: center; border-bottom: 1px solid var(--border); background: #fff; }
+  .timer-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  .timer-value { font-size: 28px; font-weight: 700; color: var(--teal); letter-spacing: 1px; margin-top: 4px; }
+  .timer-value.urgent { color: var(--red); animation: pulse 1s infinite; }
+
+  .login-page { min-height: 100vh; background: #f1f3f5; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+  .login-card { background: #fff; border-radius: 8px; border: 1px solid var(--border); width: 100%; max-width: 440px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+  .login-body { padding: 32px; }
+  .form-group { margin-bottom: 20px; }
+  .form-group label { display: block; font-size: 13.5px; font-weight: 600; color: #495057; margin-bottom: 8px; }
+  .form-group input { width: 100%; border: 1px solid var(--border); border-radius: 4px; padding: 10px 14px; font-size: 14px; outline: none; transition: border-color 0.15s; }
+  .form-group input:focus { border-color: var(--teal); }
+  
+  .captcha-box { background: #f8f9fa; border: 1px solid var(--border); border-radius: 4px; padding: 14px; text-align: center; margin-bottom: 20px; }
+  .captcha-display-area { display: flex; justify-content: center; align-items: center; gap: 5px; margin: 10px 0; background: #fff; padding: 8px; border: 1px solid var(--border); border-radius: 4px; height: 45px; }
+  .captcha-char { font-size: 22px; font-weight: 700; color: #343a40; font-family: monospace; display: inline-block; transform: rotate(var(--r)); }
+  
+  .login-instructions { border: 1px solid var(--border); border-radius: 6px; padding: 16px; margin-top: 24px; font-size: 13px; background: #ffffff; color: #333; text-align: right; direction: rtl; line-height: 1.6; }
+  .login-instructions ul { padding-right: 18px; margin-top: 6px; }
+  .login-instructions li { margin-bottom: 6px; color: #495057; }
+
+  .user-avatar-square { width: 64px; height: 64px; object-fit: cover; border: 1px solid var(--border); border-radius: 4px; }
+  .user-avatar-img { width: 76px; height: 76px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); }
+  .user-avatar-nav { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); }
+
+  .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+  .result-card { background: #f8f9fa; border: 1px solid var(--border); border-radius: 4px; padding: 16px; text-align: center; }
+  .result-card .num { font-size: 22px; font-weight: 700; color: #212529; }
+  .result-card .lbl { font-size: 12px; color: var(--text-muted); margin-top: 4px; font-weight: 500; }
+  .result-score { font-size: 44px; font-weight: 800; color: var(--teal); text-align: center; margin: 12px 0; }
+
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 15px; }
+  .modal-overlay.show { display: flex; }
+  .modal-box { background: #fff; border-radius: 6px; width: 100%; max-width: 460px; padding: 24px; border: 1px solid var(--border); box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+  .modal-btns { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .review-container { text-align: left; margin-top: 32px; border-top: 1px solid var(--border); padding-top: 24px; }
+  .review-q-item { background: #fff; border: 1px solid var(--border); border-radius: 6px; padding: 20px; margin-bottom: 16px; }
+  .review-q-text { font-weight: 600; font-size: 15px; margin-bottom: 12px; color: #212529; }
+  .review-opt-item { padding: 10px 14px; border: 1px solid var(--border); border-radius: 4px; margin-bottom: 6px; font-size: 14px; display: flex; align-items: center; justify-content: space-between; }
+  .review-opt-item.correct { background: #d4edda; border-color: #c3e6cb; color: #155724; font-weight: 600; }
+  .review-opt-item.incorrect { background: #f8d7da; border-color: #f5c6cb; color: #721c24; }
+  .badge-status { font-size: 11px; padding: 2px 6px; border-radius: 3px; font-weight: bold; text-transform: uppercase; }
+  .badge-status.correct { background: #218838; color: #fff; }
+  .badge-status.incorrect { background: #c82333; color: #fff; }
+
+  .btn-red.disabled-locked {
+    cursor: not-allowed !important;
+    opacity: 0.65;
+  }
+</style>
+</head>
+<body>
+
+<!-- 1. PAGE LOGIN -->
+<div id="page-login" class="page active">
+  <div class="login-page">
+    <div style="text-align:center; margin-bottom: 24px;">
+        <h1 style="color: var(--teal); font-size: 24px; font-weight: 800; letter-spacing: -0.5px;">bandage Portal</h1>
+    </div>
+    <div class="login-card">
+      <div style="background:#ffffff; padding:24px 32px; text-align:center; color:#000000; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; gap: 12px;">
+        <img src="https://raw.githubusercontent.com/rexiexgaming/gallery/refs/heads/main/photo_2026-09-15_15-17-16.jpg" alt="Candidate Photo" class="user-avatar-square">
+        <div>
+          <div style="font-size:20px; font-weight:700; color: #000000;">Candidate Login</div>
+          <div style="font-size:13px; color: var(--text-muted); margin-top:4px;">Exam-Year 1</div>
+        </div>
+      </div>
+      <div class="login-body">
+        <div class="form-group">
+          <label>Username (رقم قومي)</label>
+          <input type="text" id="inp-user" placeholder="Enter your national ID">
+        </div>
+        <div class="form-group">
+          <label>Password (رقم الكارنيه)</label>
+          <input type="password" id="inp-pass" placeholder="Enter your card number">
+        </div>
+
+        <div class="captcha-box">
+          <div style="font-size:12px; color:var(--text-muted); font-weight: 600; margin-bottom: 4px;">Enter Captcha - Optional (اختياري)</div>
+          <div style="display:flex; align-items:center; justify-content:center; gap:10px;">
+            <div class="captcha-display-area" id="captcha-display"><span class="captcha-char" style="--r: -5.929314286977812deg;">R</span><span class="captcha-char" style="--r: 3.515922174058277deg;">N</span><span class="captcha-char" style="--r: 6.1046660394145deg;">3</span><span class="captcha-char" style="--r: -7.477858060944504deg;">k</span><span class="captcha-char" style="--r: -3.707211003364767deg;">K</span></div>
+            <button onclick="genCaptcha()" style="background:none; border:none; font-size:20px; cursor:pointer; color:var(--teal);" title="Refresh">↻</button>
+          </div>
+          <input type="text" id="inp-captcha" placeholder="Optional" style="width: 100%; border: 1px solid var(--border); border-radius: 4px; padding: 8px 12px; font-size: 14px; outline: none; text-align: center;">
+        </div>
+
+        <button class="btn btn-teal" style="width:100%; padding:12px; font-size:14px;" onclick="doLogin()">Login</button>
+        <div id="login-error" style="color:var(--red); font-size:13px; text-align:center; margin-top:10px; display:none; font-weight:600;">الرجاء إدخال اسم المستخدم وكلمة المرور</div>
+
+        <div class="login-instructions">
+          <strong>تعليمات إضافية هامة للتقدم للامتحان:</strong>
+          <ul>
+            <li>هذا الامتحان مصمم لأغراض التدريب والتقييم الدوري فقط، ولا يتطلب إدخال أي أرقام رسمية فعلية أو سرية خارج النطاق الأكاديمي الداخلي.</li>
+            <li>اسم المستخدم (Username) الخاص بك هو الرقم القومي الافتراضي المعتمد للتدريب.</li>
+            <li>كلمة المرور (Password) هي رقم الكارنيه الجامعي الخاص بك للتأكيد والتحقق من الهوية.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 2. PAGE SELECT EXAM EVENT -->
+<div id="page-event" class="page">
+  <div class="login-page">
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px;">
+      <span style="font-size:20px; font-weight:800; color:var(--teal);">bandage</span>
+    </div>
+    <div class="login-card" style="max-width: 780px; width: 100%;">
+      <div style="padding:18px 24px; font-size:15px; font-weight:700; color:#212529; border-bottom:1px solid var(--border); background:#fff;">Please Select Exam Event</div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:60px; padding-left:24px;">Sr.</th>
+            <th>Exam Event Name</th>
+            <th>Description</th>
+            <th style="width:100px; text-align:center;">Select</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding-left:24px;">1</td>
+            <td style="font-weight:600;">MID 43</td>
+            <td style="color:var(--text-muted);">MID 43 (75 Mins) - 58 Questions</td>
+            <td style="text-align:center;"><input type="radio" name="exam-event" value="0" checked="" style="width:18px; height:18px; accent-color:var(--teal);"></td>
+          </tr>
+          <tr>
+            <td style="padding-left:24px;">2</td>
+            <td style="font-weight:600;">bandage exam</td>
+            <td style="color:var(--text-muted);">bandage exam (180 Mins) - 204 Questions</td>
+            <td style="text-align:center;"><input type="radio" name="exam-event" value="1" style="width:18px; height:18px; accent-color:var(--teal);"></td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="text-align:center; padding:20px; background: #fff; border-top: 1px solid var(--border);">
+        <button class="btn btn-teal" style="padding:11px 48px;" onclick="goToDashboard()">Proceed</button>
+      </div>
+    </div>
+    <div style="text-align:center; font-weight:600; color:var(--text-muted); font-size:13px; margin-top:16px;">Version : 3.4</div>
+  </div>
+</div>
+
+<!-- 3. PAGE DASHBOARD -->
+<div id="page-dashboard" class="page">
+  <div class="navbar">
+    <div class="navbar-brand">bandage</div>
+    <div class="navbar-right">
+      <img src="https://raw.githubusercontent.com/rexiexgaming/gallery/refs/heads/main/photo_2026-09-15_15-17-16.jpg" alt="User" class="user-avatar-nav">
+      <span style="font-size:13.5px; font-weight: 600;" id="nav-username">Candidate</span>
+      <button class="btn-logout" onclick="doLogout()">Logout</button>
+    </div>
+  </div>
+  <div class="layout">
+    <div class="sidebar">
+      <div class="sidebar-item active">Dashboard</div>
+    </div>
+    <div class="main">
+      <h2 style="font-size:20px; font-weight:700; margin-bottom:20px; color:#212529;">Dashboard</h2>
+
+      <div class="card">
+        <div class="card-header">Candidate Information</div>
+        <div style="padding:20px; background: #fff;">
+          <table class="candidate-table">
+            <tbody>
+              <tr>
+                <td style="width:140px; text-align:center;" rowspan="2">
+                  <div style="display:flex; justify-content:center; align-items:center; height:100px;">
+                    <img src="https://raw.githubusercontent.com/rexiexgaming/gallery/refs/heads/main/photo_2026-09-15_15-17-16.jpg" alt="Candidate Picture" class="user-avatar-img">
+                  </div>
+                 </td>
+                <td class="label">Candidate Name</td>
+                <td id="dash-cand-name" style="font-weight:600;">Candidate</td>
+                <td class="label">Candidate Code</td>
+                <td style="font-weight:600;">bandage</td>
+              </tr>
+              <tr>
+                <td class="label">Exam Venue</td>
+                <td>ONLINE</td>
+                <td class="label">Username</td>
+                <td id="dash-username">Logged ID</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="tabs"><div class="tab active">ACTIVE TESTS</div></div>
+      <div style="color: var(--teal); font-weight:700; font-size:15px; margin:12px 0 12px;" id="dash-event-name">MID 43</div>
+      
+      <table style="border: 1px solid var(--border); border-radius: 4px;">
+        <thead>
+          <tr>
+            <th>Main</th>
+            <th style="width:200px;">Closes On</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div style="display:flex; align-items:center; gap:6px;">
+                <span id="dash-test-label" style="font-weight:600; color: #212529;">MID 43</span>
+                <span class="badge">New</span>
+              </div>
+            </td>
+            <td>
+              <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Not specific</div>
+              <button class="btn btn-teal btn-sm" onclick="goToInstructions()">Take a Test</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="alert" style="margin-top:24px;">
+        TEST HISTORY : Currently No Recent Test(s) History Available.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 4. PAGE INSTRUCTIONS STEP 1 -->
+<div id="page-instr1" class="page">
+  <div class="page-header-bar" id="instr1-title">MID 43</div>
+  <div style="display:flex; padding:32px; gap:24px; max-width:1200px; margin:0 auto;">
+    <div style="flex:1; background:#fff; padding:24px; border-radius:6px; border:1px solid var(--border);">
+      <p style="font-weight:700; font-size:16px; margin-bottom:4px;">Instructions</p>
+      <p style="font-weight:600; font-size:13px; margin-bottom:16px; color:var(--text-muted);">Please read the following instructions carefully.</p>
+      <hr style="margin-bottom:16px; border:0; border-top:1px solid var(--border);">
+      <p style="font-size:14px; font-weight:700; margin-bottom:10px; color:var(--teal);"> Exam Instructions</p>
+      <ol style="padding-left:20px; line-height:2.2; font-size:14px; color:#495057;">
+        <li>Read each question carefully before selecting your answer.</li>
+        <li>The remaining exam time is displayed on the screen. Keep an eye on it.</li>
+        <li>Question status is indicated by the color of the corresponding box:
+    <ul>
+        <li>Green: Answered and saved.</li>
+        <li>Red: Not answered.</li>
+        <li>White: Not visited yet.</li>
+    </ul>
+</li>
+        <li>Before submitting the exam, return to all questions marked for review, verify your answers, remove the "Mark for Review" status, and ensure that the answers are saved.</li>
+        <li>You may change your answer at any time before ending the exam. If you modify an answer, you must click "Save" again.</li>
+        <li>The "End Test" button will appear after half of the exam duration has elapsed.</li>
+        <li>Before ending the test, make sure that all questions have been answered and saved successfully.</li>
+        <li>Once the exam has been ended, no further changes to your answers will be allowed.</li>
+      </ol>
+    </div>
+    <div style="width:240px; text-align:right; flex-shrink:0; background:#fff; padding:20px; border-radius:6px; border:1px solid var(--border); height:fit-content;">
+      <div style="display:flex; justify-content:center; margin-bottom:12px;">
+        <img src="https://raw.githubusercontent.com/rexiexgaming/gallery/refs/heads/main/photo_2026-09-15_15-17-16.jpg" alt="Candidate Picture" class="user-avatar-img">
+      </div>
+      <p style="font-size:12px; margin-bottom:4px; color:var(--text-muted);">Candidate Name:</p>
+      <p style="font-weight:700; font-size:14px; margin-bottom:12px; color:#212529;" id="instr1-cname">Candidate</p>
+      <p style="font-size:12px; margin-bottom:4px; color:var(--text-muted);">Candidate Code:</p>
+      <p style="font-weight:700; font-size:14px; margin-bottom:12px; color:#212529;">bandage</p>
+      <p style="font-size:12px; margin-bottom:4px; color:var(--text-muted);">Username:</p>
+      <p style="font-weight:700; font-size:14px; color:#212529;" id="instr1-uname">Logged ID</p>
+    </div>
+  </div>
+  <div style="display:flex; justify-content:flex-end; padding:0 32px 32px; max-width:1200px; margin:0 auto;">
+    <button class="btn btn-teal" onclick="goToInstr2()">Next >></button>
+  </div>
+</div>
+
+<!-- 5. PAGE INSTRUCTIONS STEP 2 -->
+<div id="page-instr2" class="page">
+  <div class="page-header-bar" id="instr2-title">MID 43</div>
+  <div style="display:flex; padding:32px; gap:24px; max-width:1200px; margin:0 auto;">
+    <div style="flex:1; background:#fff; padding:24px; border-radius:6px; border:1px solid var(--border);">
+      <p style="font-weight:700; font-size:16px; margin-bottom:4px;">Instructions</p>
+      <p style="font-weight:600; font-size:13px; margin-bottom:16px; color:var(--text-muted);">Other Important Instructions</p>
+      <hr style="margin-bottom:20px; border:0; border-top:1px solid var(--border);">
+      <p style="font-size:15px; font-weight:700; color:#212529; margin-bottom:32px;">ready?!</p>
+
+      <div style="margin-bottom:24px; background:#f8f9fa; padding:16px; border-radius:4px; border:1px solid var(--border);">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+          <label style="font-size:13.5px; font-weight:600; color:#333;">Choose default Language</label>
+          <select style="border:1px solid var(--border); border-radius:4px; padding:6px 12px; font-size:13.5px; background:#fff; color:#212529;"><option>English</option></select>
+        </div>
+        <p style="color:var(--red); font-size:12.5px; font-weight: 500;">Please note all questions will appear in your default language. This language can be changed for a particular question later on.</p>
+      </div>
+
+      <label style="display:flex; align-items:center; gap:10px; font-size:14px; color:#212529; font-weight:700; cursor:pointer; user-select:none;">
+        <input type="checkbox" id="ready-check" style="width:18px; height:18px; accent-color:var(--teal);"> I am ready
+      </label>
+    </div>
+    <div style="width:240px; text-align:right; flex-shrink:0; background:#fff; padding:20px; border-radius:6px; border:1px solid var(--border); height:fit-content;">
+      <div style="display:flex; justify-content:center; margin-bottom:12px;">
+        <img src="https://raw.githubusercontent.com/rexiexgaming/gallery/refs/heads/main/photo_2026-09-15_15-17-16.jpg" alt="Candidate Picture" class="user-avatar-img">
+      </div>
+      <p style="font-size:12px; margin-bottom:4px; color:var(--text-muted);">Candidate Name:</p>
+      <p style="font-weight:700; font-size:14px; margin-bottom:12px; color:#212529;" id="instr2-cname">Candidate</p>
+      <p style="font-size:12px; margin-bottom:4px; color:var(--text-muted);">Candidate Code:</p>
+      <p style="font-weight:700; font-size:14px; margin-bottom:12px; color:#212529;">bandage</p>
+      <p style="font-size:12px; margin-bottom:4px; color:var(--text-muted);">Username:</p>
+      <p style="font-weight:700; font-size:14px; color:#212529;" id="instr2-uname">Logged ID</p>
+    </div>
+  </div>
+  <div style="display:flex; justify-content:space-between; align-items:center; padding:0 32px 32px; max-width:1200px; margin:0 auto;">
+    <div style="display:flex; gap:10px;">
+      <button class="btn btn-teal" onclick="startExam()">I am ready to begin</button>
+      <button class="btn btn-outline" onclick="showPage('page-dashboard')">Cancel</button>
+    </div>
+    <button class="btn btn-outline" onclick="showPage('page-instr1')"><< Previous</button>
+  </div>
+</div>
+
+<!-- 6. PAGE EXAM AREA -->
+<div id="page-exam" class="page">
+  <div class="page-header-bar" id="exam-title">MID 43</div>
+  <div class="exam-layout">
+    <div class="exam-main">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <div style="font-weight:700; font-size:15px; color:#212529;">Question No. <span id="q-num-display">1</span></div>
+        <div class="font-btns">
+          <button class="font-btn" onclick="changeFontSize(-1)">A-</button>
+          <button class="font-btn" style="pointer-events:none; background:#f1f3f5; border-color:var(--border);">A</button>
+          <button class="font-btn" onclick="changeFontSize(1)">A+</button>
+        </div>
+      </div>
+
+      <div class="question-text" id="q-text-box">
+        <div class="watermark">bandage    bandage</div>
+        <div id="q-text" style="font-size:16px; position:relative; z-index:1; color:#212529;">الرجاء تحميل مصفوفة الأسئلة...</div>
+      </div>
+
+      <div class="options" id="q-options"></div>
+
+      <div class="exam-footer">
+        <button class="btn btn-teal" onclick="saveAndNext()">Save & Next</button>
+        <label class="mark-review">
+          <input type="checkbox" id="mark-review-chk" style="width:16px; height:16px; accent-color:#ffc107;"> Mark for Review
+        </label>
+      </div>
+    </div>
+
+    <div class="exam-sidebar">
+      <div class="timer-box">
+        <div class="timer-label">Time Remaining</div>
+        <div class="timer-value" id="timer-display">75:00</div>
+      </div>
+      <div class="sidebar-info">
+        <div>User: <strong id="exam-username">Logged ID</strong></div>
+        <div style="margin-top:6px;">Number of questions: <strong id="q-total">58</strong></div>
+        <div class="stats-row">
+          <div class="stat-pill"><div class="stat-dot dot-green" id="ans-count">0</div> Answered</div>
+          <div class="stat-pill"><div class="stat-dot dot-red" id="not-ans-count">58</div> Not Answered</div>
+          <div class="stat-pill"><div class="stat-dot dot-gray" id="not-vis-count">0</div> Not Visited</div>
+        </div>
+      </div>
+      <div class="q-grid" id="q-grid"></div>
+      <div class="sidebar-btns">
+        <button class="btn btn-teal" onclick="showPage('page-dashboard')">Profile</button>
+        <button class="btn btn-outline" onclick="showPage('page-instr1')">Instructions</button>
+        <button class="btn btn-red" id="btn-end-test" onclick="showEndModal()">End Test</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 7. PAGE RESULTS -->
+<div id="page-result" class="page">
+  <div class="navbar">
+    <div class="navbar-brand">bandage</div>
+    <div class="navbar-right">
+      <img src="https://raw.githubusercontent.com/rexiexgaming/gallery/refs/heads/main/photo_2026-09-15_15-17-16.jpg" alt="User" class="user-avatar-nav">
+      <span style="font-size:13.5px; font-weight:600;" id="res-nav-username">Candidate</span>
+      <button class="btn-logout" onclick="doLogout()">Logout</button>
+    </div>
+  </div>
+  <div class="layout">
+    <div class="sidebar"><div class="sidebar-item active">Dashboard</div></div>
+    <div class="main">
+      <div class="card" style="max-width:840px; margin:0 auto;">
+        <div class="card-body" style="text-align:center; background: #ffffff; border-bottom: 1px solid var(--border);">
+          <h2 style="font-size:20px; font-weight:700; color:var(--teal); margin-bottom:4px;">Exam Completed Successfully!</h2>
+          <p style="font-size:12.5px; color:var(--text-muted);">Performance Summary</p>
+        </div>
+        <div class="card-body" style="background:#fff;">
+          <div class="result-grid">
+            <div class="result-card"><div class="num" id="res-total">58</div><div class="lbl">Total Questions</div></div>
+            <div class="result-card"><div class="num" id="res-not-answered">0</div><div class="lbl">Not Answered</div></div>
+            <div class="result-card"><div class="num" style="color:#218838;" id="res-correct">0</div><div class="lbl">Correct Answers</div></div>
+            <div class="result-card"><div class="num" style="color:var(--red);" id="res-incorrect">0</div><div class="lbl">Incorrect Answers</div></div>
+          </div>
+          <div style="text-align:center; font-size:14px; font-weight:700; color:#495057; margin-bottom:2px;">Final Grade:</div>
+          <div class="result-score"><span id="res-score">0</span>%</div>
+          <div style="text-align:center; margin-top:24px;">
+            <button class="btn btn-teal" onclick="showPage('page-dashboard')">Back to Dashboard</button>
+          </div>
+
+          <div class="review-container" id="review-container">
+            <h3 style="font-size:18px; font-weight:700; margin-bottom:16px; color:var(--teal);">Review Questions & Answers</h3>
+            <div id="review-questions-list"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM END TEST MODAL -->
+<div class="modal-overlay" id="end-modal">
+  <div class="modal-box">
+    <h3 style="font-size:16px; font-weight:700; margin-bottom:10px; color:#212529;">Confirm End Test</h3>
+    <p style="font-size:14px; color:#495057; margin-bottom:20px; line-height:1.5;">
+      You have answered <span id="modal-attempted" style="font-weight:700; color:var(--teal);">0</span> out of <span id="modal-total" style="font-weight:700;">58</span> questions. Do you really want to submit and finish the test?
+    </p>
+    <div class="modal-btns">
+      <button class="btn btn-teal" onclick="endTest()">Yes, Submit</button>
+      <button class="btn btn-outline" onclick="hideEndModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var currentEvent = 0;
+var loggedUser = '';
+var events = [
+  { name: 'MID 43', questions: 58, time: 75 * 60 },
+  { name: 'bandage exam', questions: 204, time: 180 * 60 }
+];
+var answers = {}, marked = {}, visited = {};
+var currentQ = 0, timerInterval = null, timeLeft = 0, fontSize = 16;
+
+// ========== MID 43 QUESTIONS ==========
+var midtermQuestionsPool = [
+  {"text": "Degradation of biological molecules caused by bacteria is called...?", "opts": ["Apoptosis", "Liquefaction", "Putrefaction", "Autolysis"], "correct": 2},
+  {"text": "Thin skin is found in...?", "opts": ["Soles", "Most of the body", "Palms", "Scalp"], "correct": 1},
+  {"text": "Function of the nucleolus...?", "opts": ["rRNA synthesis", "DNA synthesis", "ATP production", "Protein degradation"], "correct": 0},
+  {"text": "The process of bringing substances into the cell is called...?", "opts": ["Endocytosis", "Exocytosis", "Diffusion", "Osmosis"], "correct": 0},
+  {"text": "Cardiac notch is present on the anterior border of the...?", "opts": ["Right lung", "Left lung", "Both lungs", "Mediastinum"], "correct": 1},
+  {"text": "The pharynx is continuous below with the...?", "opts": ["Esophagus", "Trachea", "Larynx", "Bronchi"], "correct": 0},
+  {"text": "The duct of the parotid gland opens into...?", "opts": ["Oral cavity proper", "Vestibule of the mouth", "Floor of the mouth", "Oropharynx"], "correct": 1},
+  {"text": "Which veins open into the right atrium?", "opts": ["Pulmonary veins", "Superior and inferior vena cava", "Coronary sinus only", "Azygos vein"], "correct": 1},
+  {"text": "Blood leaves the left ventricle through the...?", "opts": ["Ascending aorta", "Pulmonary trunk", "Pulmonary veins", "Superior vena cava"], "correct": 0},
+  {"text": "Organelles responsible for regulating calcium levels...?", "opts": ["Rough ER and Golgi apparatus", "SER and mitochondria", "Lysosomes and peroxisomes", "Ribosomes and nucleus"], "correct": 1},
+  {"text": "The most commonly used microscope in histology is the...?", "opts": ["Bright field microscope", "Electron microscope", "Fluorescence microscope", "Phase contrast microscope"], "correct": 0},
+  {"text": "Lymphoid tissues located between the palatoglossal and palatopharyngeal arches are the...?", "opts": ["Lingual tonsils", "Pharyngeal tonsils", "Palatine tonsils", "Tubal tonsils"], "correct": 2},
+  {"text": "The apex of the heart is formed by the...?", "opts": ["Right ventricle", "Left atrium", "Left ventricle", "Both ventricles"], "correct": 2},
+  {"text": "Superficial fascia is more distinct in the...?", "opts": ["Face", "Back", "Anterior abdominal wall", "Palm of hand"], "correct": 2},
+  {"text": "Primary lymphoid organ...?", "opts": ["Spleen", "Lymph node", "Thymus gland", "Palatine tonsil"], "correct": 2},
+  {"text": "The larynx is continuous below with the...?", "opts": ["Esophagus", "Trachea", "Pharynx", "Thyroid cartilage"], "correct": 1},
+  {"text": "Microscope used to examine living cells...?", "opts": ["Bright field microscope", "Phase contrast microscope", "Electron microscope", "Fluorescence microscope"], "correct": 1},
+  {"text": "Carpometacarpal joint of the thumb is a...?", "opts": ["Plane joint", "Saddle joint", "Ellipsoid joint", "Pivot joint"], "correct": 1},
+  {"text": "Joints responsible for inversion and eversion of the foot are...?", "opts": ["Hip joints", "Foot joints", "Knee joints", "Shoulder joints"], "correct": 1},
+  {"text": "Which bone lies medially in the forearm?", "opts": ["Radius", "Ulna", "Fibula", "Tibia"], "correct": 1},
+  {"text": "The trachea is formed of how many C-shaped cartilaginous rings?", "opts": ["10–12", "12–16", "16–20", "20–24"], "correct": 2},
+  {"text": "In the anatomical position, the upper limbs are...?", "opts": ["Pronated and extended", "Supinated and extended", "Supinated and flexed", "Pronated and flexed"], "correct": 1},
+  {"text": "In anatomical position, palms face...?", "opts": ["Medially", "Backward", "Forward", "Downward"], "correct": 2},
+  {"text": "Type of joint between intercarpal bones...?", "opts": ["Plane joint", "Hinge joint", "Pivot joint", "Ellipsoid joint"], "correct": 0},
+  {"text": "Thickened bands of deep fascia that hold tendons in place are called...?", "opts": ["Aponeuroses", "Retinacula", "Septa", "Ligaments"], "correct": 1},
+  {"text": "Structures that enclose neurovascular bundles are called...?", "opts": ["Retinacula", "Sheaths", "Fasciae", "Bursa"], "correct": 1},
+  {"text": "The transverse plane divides the lower limb into...?", "opts": ["Anterior and posterior parts", "Medial and lateral parts", "Proximal and distal parts", "Superior and inferior parts"], "correct": 2},
+  {"text": "A wide fibrous sheet for muscle attachment is called...?", "opts": ["Tendon", "Aponeurosis", "Ligament", "Fascia"], "correct": 1},
+  {"text": "Antibody that binds directly to antigen in immunohistochemistry...?", "opts": ["Secondary antibody", "Primary labeled antibody", "Indirect antibody", "Enzyme antibody"], "correct": 1},
+  {"text": "The term 'cranial' refers to...?", "opts": ["Near the feet", "Near the head", "Toward the midline", "Away from the head"], "correct": 1},
+  {"text": "Resolving power of an electron microscope is approximately...?", "opts": ["2 µm", "0.2 µm", "0.2 nm", "2 nm"], "correct": 2},
+  {"text": "Muscles forming sphincters are arranged in...?", "opts": ["Spiral form", "Circular form", "Convergent form", "Fusiform form"], "correct": 1},
+  {"text": "Compact bone is found in the...?", "opts": ["Ends of long bones", "Cortex of the shaft of long bones", "Medullary cavity", "Bone marrow"], "correct": 1},
+  {"text": "An example of a sesamoid bone is the...?", "opts": ["Femur", "Scapula", "Patella", "Sternum"], "correct": 2},
+  {"text": "A patient is found to have a defect in the genetic material responsible for ribosome production. Where is the defective genetic material located?", "opts": ["Nucleolus", "Nucleoplasm", "Rough endoplasmic reticulum", "Nuclear envelope"], "correct": 0},
+  {"text": "Which plane divides the body into two equal right and left halves?", "opts": ["Coronal plane", "Horizontal plane", "Sagittal plane", "Transverse plane"], "correct": 2},
+  {"text": "Anatomical terms of position include...?", "opts": ["Medial, adduction, lateral", "Flexion, posterior, anterior", "Anterior, dorsal, deep", "Ventral, abduction, extension"], "correct": 2},
+  {"text": "Which arteries supply the bones near the joint end?", "opts": ["Nutrient arteries", "Periosteal arteries", "Articular arteries", "Long arteries"], "correct": 2},
+  {"text": "Dorsal body cavities include...?", "opts": ["Thoracic and abdominal cavities", "Cranial and vertebral cavities", "Thoracic and cranial cavities", "Vertebral and pelvic cavities"], "correct": 1},
+  {"text": "Depressing the foot (pointing the toes) is called...?", "opts": ["Eversion", "Inversion", "Dorsiflexion", "Plantarflexion"], "correct": 3},
+  {"text": "A mixture of adipose and loose areolar tissues is...?", "opts": ["Skin", "Superficial fascia", "Deep fascia", "Aponeurosis"], "correct": 1},
+  {"text": "An example of an irregular bone is...?", "opts": ["Humerus", "Scapula", "Vertebra", "Tarsal bone"], "correct": 2},
+  {"text": "The central main bulk of a skeletal muscle is the...?", "opts": ["Fleshy belly", "Fibrous part", "Origin", "Insertion"], "correct": 0},
+  {"text": "Muscles that act against muscles performing a specific action are...?", "opts": ["Prime movers", "Fixators", "Synergists", "Antagonists"], "correct": 3},
+  {"text": "Which structures are derived from rough endoplasmic reticulum and fuse with the convex surface of the Golgi apparatus?", "opts": ["Transfer vesicles", "Micro-vesicles", "Both A and B", "Macrovesicles"], "correct": 2},
+  {"text": "Cristae are found in...?", "opts": ["Mitochondria", "Ribosomes", "Rough endoplasmic reticulum (RER)", "Smooth endoplasmic reticulum (SER)"], "correct": 0},
+  {"text": "One function of smooth endoplasmic reticulum (SER) is...?", "opts": ["Protein synthesis", "Regulation of intracellular calcium distribution", "Maintaining the cell skeleton", "Phagocytosis"], "correct": 1},
+  {"text": "Example of Secondary cartilaginous joint is...?", "opts": ["suture", "elbow joint", "intervertebral disc", "hip joint"], "correct": 2},
+  {"text": "Elbow joint is...?", "opts": ["hinge joint", "pivot joint", "plane joint", "saddle joint"], "correct": 0},
+  {"text": "Porta hepatis of the liver contains...?", "opts": ["portal artery & hepatic vein", "portal vein & hepatic artery", "caudate lobe & quadrate lobe", "ligamentum venosum & IVC"], "correct": 1},
+  {"text": "Large intestine begins at … and terminates at …...?", "opts": ["ileum & rectum respectively", "caecum & anal canal respectively", "ascending colon & anal canal respectively", "ileum & anal canal respectively"], "correct": 1},
+  {"text": "Base of the heart formed by...?", "opts": ["Left atrium", "Right and left ventricles", "Right ventricle only", "Left ventricle only"], "correct": 0},
+  {"text": "Right atrium receives openings of...?", "opts": ["SVC & IVC", "pulmonary trunk", "the four pulmonary veins", "aorta"], "correct": 0},
+  {"text": "Thick-walled tubes carry blood from heart to tissues...?", "opts": ["arteries", "veins", "capillaries", "tributaries"], "correct": 0},
+  {"text": "Which of the following structures is considered a cell inclusion?", "opts": ["Rough endoplasmic reticulum", "Pigment", "Golgi apparatus", "Mitochondria"], "correct": 1},
+  {"text": "Glycogen can be demonstrated using...?", "opts": ["H&E stain", "Sudan III stain", "Silver stain", "PAS stain"], "correct": 3},
+  {"text": "Centrioles are formed of...?", "opts": ["Microfilaments", "Microtubules", "Actin filaments", "Intermediate filaments"], "correct": 1},
+  {"text": "What structures contribute to the cell cytoskeleton?", "opts": ["Ribosomes", "Peroxisome", "Microfilaments", "Centriole"], "correct": 2}
+];
+
+var bandageQuestionsPool = [
+  {"text": "Plane which divides the body into two equal right & left halves:", "opts": ["Coronal plane", "Sagittal plane", "Horizontal plane", "Transverse plane"], "correct": 1},
+  {"text": "Movement of a part of the body towards the median plane, called:", "opts": ["Flexion", "Protraction", "Extension", "Adduction"], "correct": 3},
+  {"text": "Calf muscles act on the ankle joint to make:", "opts": ["Planter flexion of foot", "dorsi flexion of foot", "eversion of the foot a", "inversion of the foot d"], "correct": 0},
+  {"text": "The main function of intrinsic foot musclens is ………….:", "opts": ["Planter flexion of foot B", "dorsi flexion of foot", "Keeping foot arches", "Eversion of foot"], "correct": 2},
+  {"text": "Which term describes the movement of the sole of the foot inward?", "opts": ["Eversion", "Inversion", "Dorsiflexion", "Plantarflexion"], "correct": 1},
+  {"text": "The body, Cranial means:", "opts": ["Toward the feet", "Tail end", "Toward the head", "Front the body surface"], "correct": 2},
+  {"text": "An example of axial skeleton", "opts": ["Scapula", "Clavicle", "Sternum", "Hip bone"], "correct": 2},
+  {"text": "It forms the top of shoulder as a lateral continuation of the spine of scapula:", "opts": ["Spine", "Glenoid cavity", "Coracoid", "Acromion Page Bandage Powered by MEDICAL QUESTIONS"], "correct": 3},
+  {"text": "Which of the following bones is not a part of the appendicular skeleton?", "opts": ["Radius", "Clavicle", "Sacrum", "Scapula"], "correct": 2},
+  {"text": "Medial bone of forearm", "opts": ["Radius", "Ulna", "Humerus", "Hamarus"], "correct": 1},
+  {"text": "Name the only movable bone in the skull of man?", "opts": ["Ethmoid bone", "Nasal bone", "Mandible bone", "Lacrimal bone"], "correct": 2},
+  {"text": "A curved long bone which transmits weight from upper limb to the trunk:", "opts": ["Humerus", "calvicle", "carbal bone", "tarsal bone"], "correct": 1},
+  {"text": "A curved long bone which transmits weight from upper limb to the trunk:", "opts": ["Humerus", "calvicle", "carbal bone", "tarsal bone"], "correct": 1},
+  {"text": "They supply the bones near to the joint ends:", "opts": ["Nutrient arteries", "Periosteal arteries", "Articular arteries", "Long arteries"], "correct": 2},
+  {"text": "is an example of spongy bone:", "opts": ["end of long bones", "shaft of long bones", "end and shaft of long bones", "bone marrow"], "correct": 0},
+  {"text": "formed by intramembranous ossification?", "opts": ["the metatarsals", "the femurs", "the ribs", "the flat bones of the skull"], "correct": 3},
+  {"text": "What is compact bone?", "opts": ["Dense bone", "Immature bone", "Cancellous bone", "Spongy bone e 53 y Mediverse Page 1"], "correct": 0},
+  {"text": "Growth in the length of the long bone occurs", "opts": ["Periosteum", "Epiphysial plate", "Diaphysis", "Diaphysial plate"], "correct": 1},
+  {"text": "Example of avascular tissues is:", "opts": ["Muscles", "Joints", "bones", "cartilage"], "correct": 3},
+  {"text": "Which of the following bones is (are) Intervertebral disc is formed of", "opts": ["Hyaline cartilage", "Yellow elastic cartilage", "White fibro-cartilage", "Compact bone"], "correct": 2},
+  {"text": "Type of suture is:", "opts": ["synovial-joint", "1ry cartilaginous joint", "2ry cartilaginous joint", "fibrous joint"], "correct": 3},
+  {"text": "Epiphysial, cartilage plate is:", "opts": ["1ry cartilaginous joint", "2ry cartilaginous joint", "fibrous joint a", "synovial joint B"], "correct": 0},
+  {"text": "The fibrous joint is:", "opts": ["Connect different parts of the vertebral column", "Permit wide range of movement", "Present in the growing bones", "Best example is the sutures of the skull"], "correct": 3},
+  {"text": "Biceps muscle is:", "opts": ["Convergent type", "parallel type", "Circular type", "Segmented type"], "correct": 1},
+  {"text": "Action of Triceps in elbow flexion is:", "opts": ["agonist", "antagonist", "fixator", "prime mover"], "correct": 1},
+  {"text": "In elbow flexion, the biceps brachii functions as the:", "opts": ["Fixator", "Antagonist", "Agonist", "Synergist"], "correct": 2},
+  {"text": "Cardiac muscles are:", "opts": ["Voluntary", "Involuntary", "Striated mononucleated", "b & c Page Bandage Powered by MEDICAL QUESTIONS"], "correct": 3},
+  {"text": "Which of the below muscles is voluntarily controlled?", "opts": ["Walls of the heart", "Visceral muscles", "Biceps brachi", "Walls of blood vessels"], "correct": 2},
+  {"text": "Which of the following is (are) a function of skeletal muscle?", "opts": ["Produce movement", "Maintain body temperature", "Maintain posture", "all of above"], "correct": 3},
+  {"text": "Regarding to deep fascia:", "opts": ["It is denser than superficial fascia", "It is usually present in the form of membranes", "It lies between the muscles", "All of the above"], "correct": 3},
+  {"text": "superficial fascia may contain all of the following EXCEPT:", "opts": ["fat", "blood and lymphatic vessel", "muscles", "nerves"], "correct": 2},
+  {"text": "What forms the basis of fingerprints?", "opts": ["Epidermal folds", "Collagen fiber patterns in papillary ridges", "Sebaceous gland secretions", "Melanin deposition"], "correct": 1},
+  {"text": "Which characteristic of fingerprints makes them useful for identification?", "opts": ["Their uniformity across individuals", "Their specific and stable patterns throughout life", "Their susceptibility to environmental changes", "Their dependence on age and gender"], "correct": 1},
+  {"text": "Which of the following is NOT a pattern of fingerprints?", "opts": ["Arches", "Loops", "Spirals", "Whorls"], "correct": 2},
+  {"text": "Oral cavity is separated from the nose by:", "opts": ["Nasopharynx", "Lips", "Oropharynx", "Hard and soft palate"], "correct": 3},
+  {"text": "The large intestine begins at the …. and terminates at the", "opts": ["lleum & Rectum respectively", "Caecum & anal canal respectively", "Ascending colon & Anal canal respectively", "Ileum & anal canal respectively e 54 y Mediverse Page 2"], "correct": 1},
+  {"text": "part of the nose forms the roof of nasal cavity, it concerned with smell sensation.", "opts": ["The vestibule", "the respiratory", "the septum", "the Olfactory"], "correct": 3},
+  {"text": "Esophagus pierces the diaphragm at level of:", "opts": ["T8 vertebra", "T9 vertebra", "T10 vertebra", "T11 vertebra"], "correct": 2},
+  {"text": "Right border of the stomach called:", "opts": ["the lesser curvature", "the greater curvature", "the fundus", "the pylorus"], "correct": 0},
+  {"text": "porta hepatis of the liver contains:", "opts": ["portal artery & vein", "portal vein & hepatic artery", "hepatic artery & vein", "portal artry & hepatic vein"], "correct": 1},
+  {"text": "…………….is the narrowest part of large intestine:", "opts": ["Caecum", "ileum a", "jejunum B", "appendix"], "correct": 3},
+  {"text": "processes of digestion and absorption are called:", "opts": ["Alimentary canal", "accessory digestive organs", "small intestine", "Large intestine"], "correct": 2},
+  {"text": "Which part closes the larynx during swallowing?", "opts": ["Uvula", "Soft palate", "Epiglottis", "Tongue"], "correct": 2},
+  {"text": "Hilum of the liver called", "opts": ["Porta hapatis", "Portal vein", "Common hepatic duct", "Hepatic artery"], "correct": 0},
+  {"text": "regarding the small intestine, choose the correct answer:", "opts": ["it is 4 meters long.", "has taeniae coli in its wall.", "include the duodenum in which the common bile duct opens.", "the anal canal forms its terminal part. Page Bandage Powered by MEDICAL QUESTIONS"], "correct": 2},
+  {"text": "The organs that facilitate the processes of digestion and absorption are called:", "opts": ["Alimentary canal", "accessory digestive organs", "Small intestine", "Large intestine"], "correct": 1},
+  {"text": "All of the following are organs of the digestive system except the ………", "opts": ["spleen", "liver", "tongue", "esophagus"], "correct": 0},
+  {"text": "Cardiac notch is present in", "opts": ["Anterior border of left lung", "posterior border of left lung", "Anterior border of right lung", "Posterior border of right lung"], "correct": 0},
+  {"text": "The food pass from mouth to …and then toward the oesophgus", "opts": ["The nasopharyx", "The oropharynx", "Stomach", "Larygeopharnyx"], "correct": 1},
+  {"text": "The pleura is best described as:", "opts": ["A serous membrane surrounding the lungs", "A fibrous membrane protecting the heart", "A synovial membrane covering the ribs", "A mucous membrane lining the trachea"], "correct": 0},
+  {"text": "Which of the following is TRUE about the lung apex?", "opts": ["It is located at the base of the lungs", "It is convex upwards and projects to the root of the neck", "It extends into the abdomen", "It is a concave structure"], "correct": 1},
+  {"text": "The mediastinum is located in:", "opts": ["The abdominal cavity", "The thoracic cavity between the lungs", "The pleural cavity", "The cranial cavity"], "correct": 1},
+  {"text": "The serous membrane which lines the abdominal cavity and covers the abdominal organs called:", "opts": ["pleura", "peritoneum", "serous pericardium", "fibrous pericardium"], "correct": 1},
+  {"text": "Its wall is made up of hyaline cartilages to maintain its patency, it is:", "opts": ["nose", "pharynx", "larynx", "Lung e 55 y Mediverse Page 3"], "correct": 2},
+  {"text": "The parts of the pharynx are the EXCEPT:", "opts": ["Nasopharynx", "Tracheopharyox", "Oropharynx", "Laryngopharynx"], "correct": 1},
+  {"text": "If foreign body is inhaled, you suspect it will be found at—-", "opts": ["larynx", "trachea", "right bronchus", "left bronchus"], "correct": 2},
+  {"text": "The middle part of the pharynx is called:", "opts": ["Nasopharynx", "Oropharynx", "Laryngopharynx", "Pharyngeal isthmus"], "correct": 1},
+  {"text": "How many fissures in right lung?", "opts": ["one", "two", "three", "Five"], "correct": 1},
+  {"text": "Right lung is larger & shorter due to elevated right copula of diaphragm by:", "opts": ["right lobe of liver", "Left lobe of the liver a", "stomach B", "colon"], "correct": 0},
+  {"text": "All the following are organs of the digestive system except:", "opts": ["Spleen", "Liver", "Tongue", "Esophagus"], "correct": 0},
+  {"text": "They supply the bones near the joint ends:", "opts": ["Nutrient arteries", "Periosteal arteries", "Articular arteries", "Long arteries"], "correct": 2},
+  {"text": "Dorsal body cavities include:", "opts": ["Thoracic and abdominal cavities", "Cranial and vertebral cavities", "Thoracic and cranial cavities", "Vertebral and pelvic cavitie"], "correct": 1},
+  {"text": "They act against the muscles that perform a specific action:", "opts": ["Prime movers", "Fixators", "Synergists", "Antagonists Page Bandage Powered by MEDICAL QUESTIONS"], "correct": 3},
+  {"text": "Depressing the foot (pointing the toes):", "opts": ["Eversion", "Inversion", "Dorsiflexion", "Plantarflexion"], "correct": 3},
+  {"text": "Example of irregular bone is:", "opts": ["Humerus", "Scapula", "Vertebra", "Tarsal bone"], "correct": 2},
+  {"text": "A 20 years old male fell on out stretched hands while playing football ball. X ray shows that there is elbow dislocation. what are bones sharing in that joint?", "opts": ["humerus & ulna", "humerus, tibia & ulna", "humerus, radius & ulna", "humerus & radius"], "correct": 2},
+  {"text": "A 60 Years old female came to hospital with severe pain in her lower limb, her son said that she fegll at home while cleaning. X ray shows that there is a fracture femur. where is this bone?", "opts": ["thigh", "foot", "ankle", "Leg"], "correct": 0},
+  {"text": "Your Uncle has a persistent productive cough (with sputum). He has smoked 2 packs of cigarettes a day for the last few years. Which of the following is the responsible for expulsion of sputum?", "opts": ["Nasal fine hairs", "Flagellum of respiratory cells", "Micro villi the respiratory cells", "Cilia on the respiratory cells"], "correct": 3},
+  {"text": "Study of individual cell morphology, behavior and characters is ………….", "opts": ["Cytology", "Histology", "Biology", "Immunology"], "correct": 0},
+  {"text": "………is the ability of microscope to show two points very close to each other as two separate points.", "opts": ["Resolving Power", "Magnifying Power", "Staining Power", "Electron Power"], "correct": 0},
+  {"text": "Resolving Power of Light Microscope is ……………", "opts": ["0.2 Mm", "0.2 nm", "0.2", "0.2 mm e 56 y Mediverse Page 4"], "correct": 3},
+  {"text": "Which labeled antibody binds directly to the specific antigen?", "opts": ["Secondary labeled antibody", "Primary labeled antibody", "Tertiary labeled antibody", "Non-labeled antibody"], "correct": 1},
+  {"text": "What is the primary purpose of a microscope?", "opts": ["Resolution", "Magnification", "Resolution and Magnification", "Viewing large objects"], "correct": 2},
+  {"text": "By electron microscope; cell membrane appears as ………….", "opts": ["Trilaminar", "Bilaminar", "Basophilic", "Acidophilic"], "correct": 0},
+  {"text": "………………. is a layer of glycoproteins and glycolipids which are present on the external surface of cell membrane.", "opts": ["Glycocalyx", "Protein a", "Lipid", "Cholesterol"], "correct": 0},
+  {"text": "Cristae could be seen in ………", "opts": ["Mitochondria B", "Ribosomes", "RER", "SER"], "correct": 0},
+  {"text": "Regarding to the cell membrane Carbohydrates:", "opts": ["are present at the internal surface of the membrane.", "They are attached either to the proteins (forming glycoproteins) or to the lipids (forming glycolipids).", "are present at both internal and external surface of the membrane.", "Has a great role in exocytosis"], "correct": 1},
+  {"text": "Lipid synthesis and Glycogen metabolism are functions of ………….", "opts": ["RER", "SER", "Mitochondria", "Ribosomes"], "correct": 1},
+  {"text": "They are a membrane bound spherical vesicles containing hydrolytic enzymes ……..", "opts": ["Ribosomes", "SER", "RER", "Lysosomes"], "correct": 3},
+  {"text": "What structure contributes to the cell’s cytoskeleton?", "opts": ["Ribosomes", "Peroxisomes", "Microfilaments", "ER Page Bandage Powered by MEDICAL QUESTIONS"], "correct": 2},
+  {"text": "What structure is at the base of cilia?", "opts": ["Ribosomes", "Centrioles", "Peroxisomes", "RER"], "correct": 1},
+  {"text": "They are non-living temporary components of the cytoplasm…………..", "opts": ["Mitochondria", "Pigments", "RER", "Ribosomes"], "correct": 1},
+  {"text": "Chromosome with centromere in the center and 2 equal arms represented as …………..chromosome", "opts": ["Submetacentric", "Metacentric", "Telocentric", "Acrocentric"], "correct": 1},
+  {"text": "Euchromatin is ……………..", "opts": ["Compact, non-visible", "gContains genes that expressed by the cell.", "Play no role in protein synthesis", "Darkly Stained"], "correct": 1},
+  {"text": "A picture of a person’s chromosomes is called a…………….", "opts": ["Karyotype", "Syndrome", "Chromatin", "Fingerprint"], "correct": 0},
+  {"text": "Haploid number of chromosomes is observed in ………………..", "opts": ["Sperm & liver", "Ova & Skin", "Liver", "Sperm & Ova"], "correct": 3},
+  {"text": "The most common staining system in histology is …………..", "opts": ["H & E", "Silver stain", "PAS", "Orcein stain"], "correct": 0},
+  {"text": "Fixation of fresh tissue is essential to …………..", "opts": ["Remove water.", "Replace alcohol.", "Prevent putrefaction.", "Clear the sections."], "correct": 2},
+  {"text": "Two organelles share in formation of lysosomes are ………….", "opts": ["RER & SER", "SER & Golgi", "RER & Golgi", "none e 57 y Mediverse Page 5"], "correct": 2},
+  {"text": "Organelle playing role in preservation and renewal of cell membrane", "opts": ["SER", "Lysosomes", "Mitochondria", "Golgi"], "correct": 3},
+  {"text": "Protein forming cells is characterized by …………..", "opts": ["Many lysosomes", "Abundant RER", "Condensed nucleus"], "correct": 1},
+  {"text": "One of the following is non-membranous organelle …………", "opts": ["RER", "Ribosomes", "Mitochondria", "Golgi"], "correct": 1},
+  {"text": "Pinocytosis is the process by which cell membrane can engulf ………….", "opts": ["Fluid droplets", "Bacteria", "Solid Particles a", "Glucose"], "correct": 0},
+  {"text": "Autolysosomes are formed when 1ry lysnosomes fuses with …………", "opts": ["Phagosome B", "Residual body", "Old organelle", "Pinocytotic vesicle"], "correct": 2},
+  {"text": "Elementary particles are located in ………….", "opts": ["Outer membrane of RER", "Inner membrane of RER", "Outer mitochondrial membrane", "Inner mitochondrial membrane"], "correct": 3},
+  {"text": "Enzymes associated with drug detoxification are associated with………..", "opts": ["SER", "RER", "Golgi", "Mitochondria"], "correct": 0},
+  {"text": "Cytoplasmic basophilia is observed in cells due to ………….", "opts": ["Ribosomes", "SER", "Golgi", "Heterochromatin"], "correct": 0},
+  {"text": "As regards Glycocalyx ……………", "opts": ["located in both sides of cell membrane", "Formed of proteins & lipids", "has role in protein packaging", "Has role in adhesion & recognition Page Bandage Powered by MEDICAL QUESTIONS"], "correct": 3},
+  {"text": "The diameter of microtubules is …………….", "opts": ["25 nm", "8-10 nm", "2 nm", "10 nm"], "correct": 0},
+  {"text": "………………….is basophilic", "opts": ["Ribosomes", "SER", "Lysosomes", "Golgi"], "correct": 0},
+  {"text": "The Organelle responsible for synthesizing proteins secretes outside the cell is ……", "opts": ["Ribosomes", "RER", "Polysomes", "Cell membrane"], "correct": 1},
+  {"text": "The axoneme of cilia has……………..microtubules", "opts": ["20", "9", "12", "2"], "correct": 0},
+  {"text": "Keratin Filaments are present in ………..", "opts": ["hair", "liver", "neurons", "Connective tissue"], "correct": 0},
+  {"text": "One is an Endogenous pigment", "opts": ["carbon", "melanin", "tattoo marks", "carotene"], "correct": 1},
+  {"text": "Which of the following share in cell division ……….", "opts": ["Centrioles", "Keratin", "flagella", "Glial filaments"], "correct": 0},
+  {"text": "Fat cells are stained by ……………", "opts": ["Iron hematoxylin", "Silver", "Janus", "Sudan III"], "correct": 3},
+  {"text": "Glycogen granules are stained by ………….", "opts": ["Best`s carmine", "Sudan III", "Silver stain", "Osmic stain e 58 y Mediverse Page 6"], "correct": 0},
+  {"text": "Microtubules are formed by protein called …………", "opts": ["tubulin", "Actin", "Myosin", "clathrin"], "correct": 0},
+  {"text": "All the following statements about the cell membrane are correct EXCEPT ONE:", "opts": ["It is 0.9-0.15 um in thickness.", "It is not resolved by LM.", "It regulates the passage of materials in the cell.", "With EM, it reveals trilamellar appearance."], "correct": 0},
+  {"text": "All the followings are mitochondrial functions EXCEPT ONE:", "opts": ["oxidation of short chain fatty acids.", "Provide ATP.", "Phagocytose foreign substance."], "correct": 2},
+  {"text": "All the following are intermediate filaments EXCEPT ONE:", "opts": ["Desmin.", "Tonofilaments.", "Lipofuscin. a", "Neuro filaments."], "correct": 2},
+  {"text": "Euchromatin Is: n", "opts": ["highly coiled a", "electron dense B", "directing protein synthesis"], "correct": 2},
+  {"text": "Heterochromatin is …………..", "opts": ["highly coiled", "electron dense", "directing protein synthesis", "a & b are correct"], "correct": 3},
+  {"text": "Component of the nucleolus are all of the following except", "opts": ["pars fibrosa", "pars granulosa", "pars amorpha", "nuclear sap"], "correct": 3},
+  {"text": "Which organelle contains digestive enzymes …………….", "opts": ["Ribosomes", "RER", "SER", "Lysosomes"], "correct": 3},
+  {"text": "Powerhouse of the cell is ………..", "opts": ["mitochondria", "Golgi", "SER", "peroxisomes Page Bandage Powered by MEDICAL QUESTIONS"], "correct": 0},
+  {"text": "The most important and essential pigment in the body is", "opts": ["Carotene", "Hemoglobin", "Melanin", "Carbon particles"], "correct": 1},
+  {"text": "The Golgi apparatus is", "opts": ["The site of packing of secretory products of the cell", "Continuous with smooth endoplasmic reticulum", "The site of protein synthesis", "Capable of providing energy"], "correct": 0},
+  {"text": "Which of the following is used to stain fat", "opts": ["Eosin", "Sudan III", "Hematoxylin", "Toluidine blue"], "correct": 1},
+  {"text": "Nucleoplasm is found inside", "opts": ["Hemoglobin", "Nucleues", "Nucleoli", "Cell membrane"], "correct": 1},
+  {"text": "In which of the following animal cells are centrioles absent?", "opts": ["Liver cells", "Nerve cells", "Muscle cells", "Skin cells"], "correct": 1},
+  {"text": "Which pigment contains iron?", "opts": ["Chlorophyll", "Hemoglobin", "Melanin", "Carotene"], "correct": 1},
+  {"text": "Which is the important part of the nuclear matrix?", "opts": ["Cytoplasm", "Chromatin", "Ribosomes", "Nuclear membrane"], "correct": 1},
+  {"text": "Which of the following is NOT considered as an inclusion ……..", "opts": ["Hemoglobin", "uric acid crystals", "glycogen", "mitochondria"], "correct": 3},
+  {"text": "Process in which cell releases material to the outside", "opts": ["Phagocytosis", "Pinocytosis", "Exocytosis", "Endocytosis e 59 y Mediverse Page 7"], "correct": 2},
+  {"text": "Which organelle sorts and packages proteins in the cell ………..", "opts": ["RER", "Golgi", "SER", "Mitochondria"], "correct": 1},
+  {"text": "Where are ribosomes constructed …………", "opts": ["Cell membrane", "Golgi", "Nucleoli", "Mitochondria"], "correct": 2},
+  {"text": "Polysaccharide coat found on the surface of the cell membrane ………", "opts": ["Glycocalyx", "Cholesterol", "Integral", "Peripheral"], "correct": 0},
+  {"text": "What is cell drinking ………", "opts": ["Phagocytosis", "Pinocytosis", "Exocytosis", "Endocytosis a"], "correct": 1},
+  {"text": "Which structure contributes in cytoskeleton ………. n", "opts": ["microtubules a", "centrioles B", "ribosomes", "Nucleus"], "correct": 0},
+  {"text": "………………….. contains DNA", "opts": ["Nucleus", "mitochondria", "lysosomes", "A & B"], "correct": 3},
+  {"text": "Steroid synthesis occurs in …………..THE", "opts": ["Glogi", "RER", "SER", "Nucleus"], "correct": 2},
+  {"text": "………………….Is formed by 9 triblets of microtubules", "opts": ["centrioles", "mitochondria", "Axoneme", "flagella"], "correct": 0},
+  {"text": "the heads of phospholipid in cell membrane is ………", "opts": ["acidophilic", "basophilic", "hydrophobic", "hydrophilic Page Bandage Powered by MEDICAL QUESTIONS"], "correct": 3},
+  {"text": "Vesicles present near the cis face of golgi are………………vesicles", "opts": ["secretory", "transfer", "endogenous", "none of all"], "correct": 1},
+  {"text": "Indigestible substances in long lived cells are ……………", "opts": ["lysosomes", "residual bodies", "mitochondria", "phagosomes"], "correct": 1},
+  {"text": "Chromatins in metaphase consists of ……………..", "opts": ["naked DNA", "single DNA", "X shaped chromosome", "None of all"], "correct": 0},
+  {"text": "Eukaryotic cells means:", "opts": ["Have no nucleus.", "Non true cell.", "True cell.", "Prokaryotic cell."], "correct": 2},
+  {"text": "Which is true about the Nucleolus?", "opts": ["Formed of Light area and dark area.", "tRNA & mRNA are formed in it.", "Non membranous spherical acidophilic bodies.", "Its pars granulosa have accumulation of newly formed ribosomal subunits."], "correct": 0},
+  {"text": "which of the following events is not a character of apoptosis?", "opts": ["phagocytosis", "inflammation", "condensation of chromatin", "fragmentation of the cell into small membranous components"], "correct": 1},
+  {"text": "The following of are the functions of lysosomes except:", "opts": ["Phagocytosis", "pinocytosis", "exocytosis", "breakdown of some intracellular materials"], "correct": 2},
+  {"text": "The following is/are the characters of mitochondria:", "opts": ["Need special stain to be seen", "Have double membranes", "Contain its own DNA", "All of the above"], "correct": 3},
+  {"text": "The function of free ribosomes is to synthesize", "opts": ["Lipid", "Secreted by the cell", "Cytoplasmic protein necessary for the cell own existence", "all of the above e 60 y Mediverse Page 8"], "correct": 2},
+  {"text": "Colour of skin is due to presence of", "opts": ["Melanin", "Lipofuscin", "Hemoglobin", "Carotene"], "correct": 0},
+  {"text": "Somatic cells of a human have chromosomes and are called", "opts": ["10, haploid", "92, diploid", "23, haploid", ".46, diploid"], "correct": 3},
+  {"text": "The attachment points for spindle fibers is .„….", "opts": ["Kinetochores", "Telomeres", "q arms", "P arms"], "correct": 0},
+  {"text": "Loose, mixture of adipose and loose areolar tissues:", "opts": ["Skin", "Superficial fascia", "Deep fascia a", "Aponeurosis d"], "correct": 1},
+  {"text": "These are membranous organelles thant contain oxidative and catalase enzymes:", "opts": ["RER B", "Centrioles", "Peroxisomes", "SER"], "correct": 2},
+  {"text": "The 5 year old boy has presented with abnormal size of abdomen. After medical examination and ultrasound investigation revealed hepatomegaly. Biopsy from liver showed increase glycogen deposition in hepatocytes. The organelle affected responsible for this condition is ………………………………..", "opts": ["RER", "Lysosomes", "Ribosomes", "Centrioles"], "correct": 1},
+  {"text": "The central main bulk of the skeletal muscle:", "opts": ["Fleshy belly", "Fibrous part", "Origin", "Insertion"], "correct": 0},
+  {"text": "Resolving power of light microscope is:", "opts": ["0.2 µm", "0.2 nm", "0.2", "0.2 mm Page Bandage Powered by MEDICAL QUESTIONS"], "correct": 0},
+  {"text": "By electron microscope, cell membrane appears as:", "opts": ["Trilaminar structure", "Bilaminar structure", "Basophilic structure", "Acidophilic structure"], "correct": 0},
+  {"text": "Epiphysial cartilage plate:", "opts": ["Primary cartilaginous joint", "Secondary cartilaginous joint", "Fibrous joint", "Synovial joint"], "correct": 0},
+  {"text": "We have a different blood group who had to take a blood test before the blood transfusion. What organelle do you think is responsible for the blood antigen on RBCs?", "opts": ["Golgi apparatus", "SER", "Cell coat", "Mitochondria"], "correct": 2},
+  {"text": "Golgi apparatus can be stained with:", "opts": ["Silver", "PAS", "Sudan III", "Sudan black"], "correct": 0},
+  {"text": "The special stain of glycogen is:", "opts": ["PAS", "Silver", "Sudan III", "Sudan black"], "correct": 0},
+  {"text": "Which type of ribosome forms proteins for cell local use:", "opts": ["Free", "Polysomes", "Attached", "Both A & B"], "correct": 0},
+  {"text": "Cultured stem cells are examined by which microscope?", "opts": ["Transmission Electron Microscop", "Light Microscope", "Phase contrast", "Electron Microscop"], "correct": 2},
+  {"text": "Which is branch cell", "opts": ["Muscle cell", "Nervous cell", "Fat cell", "RBCs"], "correct": 1},
+  {"text": "What is the anatomical term Depressing the foot, Pointing toes?", "opts": ["Dorsiflexion", "PlantarFlexion", "Inversion", "Eversion e 61 y Mediverse Page 9"], "correct": 1},
+  {"text": "The common and widely microscope", "opts": ["Transmission Electron Microscop", "Light Microscope", "Phase contrast", "Electron Microscop"], "correct": 1},
+  {"text": "Microscope Used to examine living", "opts": ["Transmission Electron Microscop", "Light Microscope", "Phase contrast", "Electron Microscop"], "correct": 2},
+  {"text": "Which labeled antibody binds indirectly to the specific antigen?", "opts": ["Secondary labeled antibody", "Primary labeled antibody", "Tertiary labeled antibody", "Non-labeled antibody"], "correct": 0},
+  {"text": "Plane which divides the body into two equal right & left halves:", "opts": ["Coronal plane", "Horizontal plane", "Sagittal plane", "Transverse plane a"], "correct": 2},
+  {"text": "Loose, mixture of adipose and loose areolar tissues: n", "opts": ["Skin a", "Superficial fascia B", "Deep fascia", "Aponeurosis"], "correct": 1},
+  {"text": "These are membranous organelles that contain oxidative and catalase enzymes:", "opts": ["RER", "Centrioles", "Peroxisomes", "SER"], "correct": 2},
+  {"text": "The 5 year old boy has presented with abnormal size of abdomen. After medical examination and ultrasound investigation revealed hepatomegaly. Biopsy from liver showed increase glycogen deposition in hepatocytes. The organelle affected responsible for this condition is ………………………………..", "opts": ["RER", "Lysosomes", "Ribosomes", "Centrioles"], "correct": 1},
+  {"text": "The central main bulk of the skeletal muscle:", "opts": ["Fleshy belly", "Fibrous part", "Origin", "Insertion"], "correct": 0},
+  {"text": "Resolving power of light microscope is:", "opts": ["0.2 µm", "0.2 nm", "0.2", "0.2 mm Page Bandage Powered by MEDICAL QUESTIONS"], "correct": 0},
+  {"text": "By electron microscope, cell membrane appears as:", "opts": ["Trilaminar structure", "Bilaminar structure", "Basophilic structure", "Acidophilic structure"], "correct": 0},
+  {"text": "Epiphysial cartilage plate:", "opts": ["Primary cartilaginous joint", "Secondary cartilaginous joint", "Fibrous joint", "Synovial joint"], "correct": 0},
+  {"text": "We have a different blood group who had to take a blood test before the blood transfusion. What organelle do you think is responsible for the blood antigen on RBCs?", "opts": ["Golgi apparatus", "SER", "Cell coat", "Mitochondria"], "correct": 2},
+  {"text": "Golgi apparatus can be stained with:", "opts": ["Silver", "PAS", "Sudan III", "Sudan black"], "correct": 0},
+  {"text": "Anatomical terms of position include:", "opts": ["Medial, adduction, lateral", "Flexion, posterior, anterior", "Anterior, dorsal, deep", "Ventral, abduction, extension"], "correct": 2},
+  {"text": "Provides stability to the cell membrane:", "opts": ["Cholesterol", "Phospholipid", "Integral protein", "Carbohydrates"], "correct": 0},
+  {"text": "The ability of microscope to magnify objects is:", "opts": ["Resolving power", "Magnification power", "Staining power", "Electron power"], "correct": 1},
+  {"text": "Cristae could be seen in:", "opts": ["Mitochondria", "Ribosomes", "RER", "SER"], "correct": 0},
+  {"text": "The newborn infant has born presented with yellowish color of his skin. Doctor told his parents not worried about this condition and will resolve with time. The organelle involved in this condition is", "opts": ["RER", "SER", "Mitochondria", "Ribosomes e 62 y Mediverse Page 10"], "correct": 1},
+  {"text": "Filaments of newly formed rRNA are located within:", "opts": ["Nucleolar organizer region", "Pars fibrosa", "Pars granulosa", "Light area"], "correct": 1},
+  {"text": "Two equal P & q chromosomal arms are noticed in:", "opts": ["Submetacentric", "Metacentric", "Acrocentric", "Telocentric"], "correct": 1},
+  {"text": "Which of the following is true about heterochromatin?", "opts": ["Prominent in active cells", "Lightly stained", "Less compact", "Prominent in inactive cells"], "correct": 3},
+  {"text": "The attachment points for spindle fibers is:", "opts": ["Kinetochores", "Telomeres", "q arms", "p arms d"], "correct": 0},
+  {"text": "Which sequence lists the regions of the large intestine in order, from the end of the aileum to the anus? B", "opts": ["Cecum, rectum, anal canal, colon", "Colon, rectum, anal canal, cecum", "Cecum, colon, rectum, anal canal", "Ileum & anal canal respectively"], "correct": 2},
+  {"text": "Large intestine begins at ………….and terminates at ………", "opts": ["Ileum & rectum respectively", "Caecum & anal canal respectively", "Ascending colon & anal canal respectively", "Ileum & anal canal respectively"], "correct": 1},
+  {"text": "Porta hepatis of the liver contains:", "opts": ["Portal artery & hepatic vein", "Portal vein & hepatic artery", "Caudate lobe & quadrate lobe", "Ligamentum venosum & IVC"], "correct": 1},
+  {"text": "Base of the heart is formed by:", "opts": ["Right & left atria", "Right & left ventricles", "Right ventricle only", "Left ventricle only"], "correct": 0},
+  {"text": "Which part closes the larynx during swallowing?", "opts": ["Uvula", "Soft palate", "Epiglottis", "Tongue Page Bandage Powered by MEDICAL QUESTIONS"], "correct": 2},
+  {"text": "Right atrium receives openings of:", "opts": ["SVC & IVC", "Pulmonary trunk", "The four pulmonary veins", "Aorta"], "correct": 0},
+  {"text": "Apex of the heart formed by", "opts": ["RT. LT atria", "RT. LT ventricles", "RT ventricles only", "LT ventricles only"], "correct": 2},
+  {"text": "40 Years old female came to hospital with severe pain in her chest, the pain is referred to the left shoulder, ECHO shows that there is mild stenosis in the mitral valve of the heart, the patient suffered from recurrent chest infection, past history of recuurent tonsillitis. mitral valve presents between:", "opts": ["Rt & Lt atria", "Rt atrium & Lt ventricle", "Rt atriuem & Rt ventricle", "Lt atrium & Lt ventricle"], "correct": 3},
+  {"text": "Thick-walled tubes carry blood from heart to tissues:", "opts": ["Arteries", "Veins", "Capillaries", "Tributaries"], "correct": 0},
+  {"text": "Aorta arises from:", "opts": ["Right ventricle", "Right atrium", "Left ventricle", "Left atrium"], "correct": 2},
+  {"text": "Oral cavity is separated from the nose by:", "opts": ["Nasopharynx", "Lips", "Oropharynx", "Hard palate"], "correct": 1},
+  {"text": "An example of secondary lymphoid tissue:", "opts": ["Pancreas", "Lymph node", "Bone marrow", "Thymus gland"], "correct": 3},
+  {"text": "Regarding the centriole:", "opts": ["Each centriole consists of nine bundles of microtubules called triplets", "Each centriole consists of eight bundles of microtubules called triplets", "Each centriole consists of nine bundles of microtubules called doublets", "Each centriole consists of nine bundles of microfilaments called triplets e 63 y Mediverse Page 11"], "correct": 0},
+  {"text": "Signet ring appearance is a characteristic morphological feature of fat cells when stained by:", "opts": ["Osmium tetroxide", "H&E;", "Sudan III", "PAS"], "correct": 1},
+  {"text": "Lipofuscin:", "opts": ["It is a type of exogenous pigment", "It is a type of membranous organelle", "It is a non-membranous organelle", "Increased in nerve cells"], "correct": 3},
+  {"text": "According to the structural anomalies of chromosomes, transverse separation of centromere is called:", "opts": ["Ring chromosome", "Translocation", "Inversion", "Isochromosome"], "correct": 3},
+  {"text": "Reciprocal reattachments of pieces of chromatids:", "opts": ["Deletion", "Isochromosome a", "Translocation", "Inversion"], "correct": 3},
+  {"text": "In gamete cells, the human chromosomes are:", "opts": ["Haploid number B", "Triploid number", "Tetraploid number", "Diploid number"], "correct": 0},
+  {"text": "In submetacentric chromosome, the centromere is:", "opts": ["At the end", "Near to the center", "Central", "None of the above"], "correct": 1},
+  {"text": "Filaments of newly formed rRNA are located within ___ of nucleolus:", "opts": ["Nucleolar organizer region", "Pars fibrosa", "Pars granulosa", "Light area"], "correct": 1},
+  {"text": "Which of the following is true about heterochromatin?", "opts": ["Prominent in active cells", "Lightly stained", "Less compact", "Prominent in inactive cells"], "correct": 3},
+  {"text": "The attachment points for spindle fibers in chromosomes are:", "opts": ["Kinetochores", "Centromere", "q arm", "p arm Page Bandage Powered by MEDICAL QUESTIONS"], "correct": 0}
+];
+
+var examQuestions = [];
+
+function initRandomQuestions() {
+  var poolCopy = currentEvent === 0 ? [...midtermQuestionsPool] : [...bandageQuestionsPool];
+  var numQuestions = events[currentEvent].questions;
+  examQuestions = [];
+
+  for (var i = 0; i < numQuestions; i++) {
+    if (poolCopy.length === 0) break;
+    var randomIndex = Math.floor(Math.random() * poolCopy.length);
+    var pickedQuestion = poolCopy.splice(randomIndex, 1)[0];
+
+    // Answer options keep their original order (no shuffling)
+    examQuestions.push({
+      text: pickedQuestion.text,
+      opts: [...pickedQuestion.opts],
+      correct: pickedQuestion.correct,
+      multipleCorrect: false
+    });
+  }
+}
+
+function genCaptcha() {
+  var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+  var captchaVal = '';
+  for (var i=0; i<5; i++) captchaVal += chars[Math.floor(Math.random()*chars.length)];
+  var el = document.getElementById('captcha-display');
+  if(!el) return;
+  el.innerHTML = '';
+  captchaVal.split('').forEach(function(c){
+    var span = document.createElement('span');
+    span.className = 'captcha-char';
+    span.style.setProperty('--r', (Math.random()*20-10)+'deg');
+    span.textContent = c;
+    el.appendChild(span);
+  });
+  window.currentCaptcha = captchaVal;
+}
+genCaptcha();
+
+function doLogin() {
+  var u = document.getElementById('inp-user').value.trim();
+  var p = document.getElementById('inp-pass').value.trim();
+  
+  if (!u || !p) {
+    document.getElementById('login-error').style.display = 'block';
+    document.getElementById('login-error').textContent = "الرجاء إدخال اسم المستخدم وكلمة المرور";
+    return;
+  }
+  loggedUser = u;
+  document.getElementById('login-error').style.display = 'none';
+  
+  document.getElementById('nav-username').textContent = u;
+  document.getElementById('dash-cand-name').textContent = "Student (" + u.substring(0,4) + ")";
+  document.getElementById('dash-username').textContent = u;
+  document.getElementById('instr1-cname').textContent = "Student (" + u.substring(0,4) + ")";
+  document.getElementById('instr1-uname').textContent = u;
+  document.getElementById('instr2-cname').textContent = "Student (" + u.substring(0,4) + ")";
+  document.getElementById('instr2-uname').textContent = u;
+  document.getElementById('exam-username').textContent = u;
+  
+  showPage('page-event');
+}
+
+function doLogout() {
+  showPage('page-login');
+  document.getElementById('inp-user').value = '';
+  document.getElementById('inp-pass').value = '';
+  document.getElementById('inp-captcha').value = '';
+  genCaptcha();
+}
+
+function goToDashboard() {
+  var radios = document.getElementsByName('exam-event');
+  for (var i = 0; i < radios.length; i++) {
+    if (radios[i].checked) { currentEvent = i; break; }
+  }
+  var ev = events[currentEvent];
+  document.getElementById('dash-event-name').textContent = ev.name;
+  document.getElementById('dash-test-label').textContent = ev.name;
+  // Update timer display based on selected exam
+  var mins = Math.floor(ev.time / 60);
+  document.getElementById('timer-display').textContent = (mins<10?'0':'')+mins+':00';
+  showPage('page-dashboard');
+}
+
+function goToInstructions() {
+  var ev = events[currentEvent];
+  document.getElementById('instr1-title').textContent = ev.name;
+  document.getElementById('instr2-title').textContent = ev.name;
+  document.getElementById('exam-title').textContent = ev.name;
+  showPage('page-instr1');
+}
+
+function goToInstr2() {
+  showPage('page-instr2');
+}
+
+function startExam() {
+  if(!document.getElementById('ready-check').checked) {
+    alert("Please check the 'I am ready' checkbox to begin.");
+    return;
+  }
+  var ev = events[currentEvent];
+  answers = {}; marked = {}; visited = {};
+  currentQ = 0; fontSize = 16;
+  timeLeft = ev.time;
+  
+  initRandomQuestions();
+  
+  buildGrid(ev.questions);
+  loadQuestion(0);
+  updateStats();
+  document.getElementById('q-total').textContent = ev.questions;
+  
+  startTimer();
+  showPage('page-exam');
+}
+
+function buildGrid(n) {
+  var g = document.getElementById('q-grid');
+  g.innerHTML = '';
+  for (var i=0; i<n; i++) {
+    var d = document.createElement('div');
+    d.className = 'q-num'; d.id = 'qn-'+i; d.textContent = i+1;
+    (function(idx){ d.onclick = function(){ loadQuestion(idx); }; })(i);
+    g.appendChild(d);
+  }
+}
+
+function loadQuestion(i) {
+  currentQ = i; visited[i] = true;
+  var q = examQuestions[i];
+  document.getElementById('q-num-display').textContent = i+1;
+  document.getElementById('q-text').textContent = q.text;
+  document.getElementById('q-text').style.fontSize = fontSize+'px';
+  
+  var opts = document.getElementById('q-options');
+  opts.innerHTML = '';
+  
+  q.opts.forEach(function(opt, oi) {
+    if (opt === "") return;
+    var lbl = document.createElement('label');
+    var inp = document.createElement('input');
+    inp.type = 'radio'; inp.name = 'q-opt'; inp.value = oi;
+    if (answers[i] === oi) inp.checked = true;
+    inp.onchange = function() {
+      answers[i] = oi;
+      updateGrid();
+      updateStats();
+    };
+    var sp = document.createElement('span'); sp.textContent = opt;
+    lbl.appendChild(inp); lbl.appendChild(sp); opts.appendChild(lbl);
+  });
+  
+  var reviewChk = document.getElementById('mark-review-chk');
+  reviewChk.checked = !!marked[i];
+  reviewChk.onchange = function() {
+    marked[i] = this.checked;
+    updateGrid();
+  };
+  
+  updateGrid();
+}
+
+function updateGrid() {
+  var n = events[currentEvent].questions;
+  for (var i=0; i<n; i++) {
+    var el = document.getElementById('qn-'+i); if (!el) continue;
+    el.className = 'q-num';
+    if (i === currentQ) el.classList.add('current');
+    else if (answers[i] !== undefined) el.classList.add('answered');
+    else if (marked[i]) el.classList.add('marked');
+  }
+}
+
+function updateStats() {
+  var n = events[currentEvent].questions;
+  var ans = Object.keys(answers).length;
+  document.getElementById('ans-count').textContent = ans;
+  document.getElementById('not-ans-count').textContent = n - ans;
+  document.getElementById('not-vis-count').textContent = n - Object.keys(visited).length;
+}
+
+function saveAndNext() {
+  var n = events[currentEvent].questions;
+  if (currentQ < n - 1) {
+    loadQuestion(currentQ + 1);
+  } else {
+    showEndModal();
+  }
+  updateStats();
+}
+
+function changeFontSize(d) {
+  fontSize = Math.min(24, Math.max(12, fontSize + d));
+  document.getElementById('q-text').style.fontSize = fontSize + 'px';
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+  timerInterval = setInterval(function(){
+    timeLeft--;
+    var m = Math.floor(timeLeft/60), s = timeLeft%60;
+    var el = document.getElementById('timer-display');
+    el.textContent = (m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+
+    if (timeLeft <= 300) el.classList.add('urgent');
+    if (timeLeft <= 0){ clearInterval(timerInterval); forceEndTest(); }
+  }, 1000);
+}
+
+function showEndModal() {
+  document.getElementById('modal-attempted').textContent = Object.keys(answers).length;
+  document.getElementById('modal-total').textContent = events[currentEvent].questions;
+  document.getElementById('end-modal').classList.add('show');
+}
+function hideEndModal() { document.getElementById('end-modal').classList.remove('show'); }
+
+function forceEndTest() {
+  hideEndModal(); clearInterval(timerInterval);
+  calculateResults();
+}
+
+function endTest() {
+  hideEndModal(); clearInterval(timerInterval);
+  calculateResults();
+}
+
+function downloadResultsAsFile() {
+  const total = document.getElementById('res-total').innerText;
+  const notAnswered = document.getElementById('res-not-answered').innerText;
+  const correct = document.getElementById('res-correct').innerText;
+  const incorrect = document.getElementById('res-incorrect').innerText;
+  const score = document.getElementById('res-score').innerText;
+  const userName = loggedUser || "Candidate";
+  const examName = events[currentEvent].name;
+
+  let content = `========================================\n`;
+  content += `       bandage - EXAM RESULTS       \n`;
+  content += `========================================\n\n`;
+  content += `Candidate: ${userName}\n`;
+  content += `Exam: ${examName}\n`;
+  content += `Date: ${new Date().toLocaleString()}\n\n`;
+  content += `========== SUMMARY ==========\n`;
+  content += `Total Questions:      ${total}\n`;
+  content += `Not Answered:         ${notAnswered}\n`;
+  content += `Correct Answers:      ${correct}\n`;
+  content += `Incorrect Answers:    ${incorrect}\n`;
+  content += `Final Score:          ${score}%\n\n`;
+  content += `========== DETAILED REVIEW ==========\n\n`;
+
+  const reviewItems = document.querySelectorAll('.review-q-item');
+  reviewItems.forEach((item, idx) => {
+    const qTextElem = item.querySelector('.review-q-text');
+    if (qTextElem) {
+      content += `[Q${idx+1}] ${qTextElem.innerText}\n`;
+    }
+    content += `----------------------------------------\n`;
+    const optItems = item.querySelectorAll('.review-opt-item');
+    optItems.forEach(opt => {
+      let text = opt.innerText.replace('Correct Answer', '').replace('Your Answer', '').replace('✓', '').trim();
+      if (opt.classList.contains('correct')) {
+        content += `✓ ${text} [CORRECT ANSWER]\n`;
+      } else if (opt.classList.contains('incorrect')) {
+        content += `✗ ${text} [YOUR ANSWER - INCORRECT]\n`;
+      } else if (text && !text.includes('Correct') && !text.includes('Your')) {
+        content += `  ${text}\n`;
+      }
+    });
+    content += `\n`;
+  });
+
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  link.href = url;
+  link.download = `Exam_Results_${examName.replace(/ /g, '_')}_${userName}_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.txt`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+function calculateResults() {
+  var ev = events[currentEvent], total = ev.questions;
+  var attempted = Object.keys(answers).length;
+  var correct = 0;
+  
+  for (var i = 0; i < total; i++) {
+    if (answers[i] !== undefined && examQuestions[i]) {
+      // Handle multiple correct answers
+      if (examQuestions[i].multipleCorrect) {
+        var userAnswer = answers[i];
+        var correctOptions = examQuestions[i].correct;
+        // For multiple choice with string like "B, C" we need special comparison
+        // This is simplified - for now treat as correct only if exact match
+        if (userAnswer !== undefined && correctOptions.includes(String.fromCharCode(65 + userAnswer))) {
+          correct++;
+        }
+      } else {
+        if (answers[i] === examQuestions[i].correct) {
+          correct++;
+        }
+      }
+    }
+  }
+  var score = Math.round((correct / total) * 100);
+  var notAnswered = total - attempted;
+  
+  document.getElementById('res-total').textContent = total;
+  document.getElementById('res-not-answered').textContent = notAnswered;
+  document.getElementById('res-correct').textContent = correct;
+  document.getElementById('res-incorrect').textContent = attempted - correct;
+  document.getElementById('res-score').textContent = score;
+  
+  buildReviewScreen();
+  downloadResultsAsFile();
+  showPage('page-result');
+}
+
+function buildReviewScreen() {
+  var listContainer = document.getElementById('review-questions-list');
+  listContainer.innerHTML = '';
+  
+  examQuestions.forEach(function(q, i) {
+    var qItem = document.createElement('div');
+    qItem.className = 'review-q-item';
+    
+    var qText = document.createElement('div');
+    qText.className = 'review-q-text';
+    var answeredStatus = answers[i] !== undefined ? '✓ Answered' : '✗ Not Answered';
+    qText.textContent = (i + 1) + ". " + q.text + ` [${answeredStatus}]`;
+    qItem.appendChild(qText);
+    
+    q.opts.forEach(function(opt, oi) {
+      if (opt === "") return;
+      var optItem = document.createElement('div');
+      optItem.className = 'review-opt-item';
+      
+      var optText = document.createElement('span');
+      optText.textContent = opt;
+      optItem.appendChild(optText);
+      
+      // Check if this is the correct answer
+      var isCorrect = false;
+      if (q.multipleCorrect) {
+        isCorrect = q.correct.includes(String.fromCharCode(65 + oi));
+      } else {
+        isCorrect = (oi === q.correct);
+      }
+      
+      if (isCorrect) {
+        var correctBadge = document.createElement('span');
+        correctBadge.className = 'badge-status correct';
+        correctBadge.textContent = 'Correct Answer';
+        optItem.appendChild(correctBadge);
+        optItem.classList.add('correct');
+      }
+      
+      // Check if user selected this option
+      if (answers[i] === oi) {
+        if (!isCorrect) {
+          var wrongBadge = document.createElement('span');
+          wrongBadge.className = 'badge-status incorrect';
+          wrongBadge.textContent = 'Your Answer';
+          optItem.appendChild(wrongBadge);
+          optItem.classList.add('incorrect');
+        } else {
+          var correctUserBadge = document.createElement('span');
+          correctUserBadge.className = 'badge-status correct';
+          correctUserBadge.textContent = 'Your Answer ✓';
+          optItem.appendChild(correctUserBadge);
+        }
+      }
+      
+      qItem.appendChild(optItem);
+    });
+    
+    // If user didn't answer, show a message
+    if (answers[i] === undefined) {
+      var noAnswerMsg = document.createElement('div');
+      noAnswerMsg.style.marginTop = '10px';
+      noAnswerMsg.style.padding = '8px';
+      noAnswerMsg.style.background = '#fff3cd';
+      noAnswerMsg.style.borderRadius = '4px';
+      noAnswerMsg.style.color = '#856404';
+      noAnswerMsg.style.fontSize = '13px';
+      noAnswerMsg.innerHTML = '⚠️ You did not answer this question. The correct answer is shown above.';
+      qItem.appendChild(noAnswerMsg);
+    }
+    
+    listContainer.appendChild(qItem);
+  });
+}
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+}
+</script>
+
+</body></html>
