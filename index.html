@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bandage Exams</title>
+    <meta name="description" content="Bandage Exams - practice exams for Faculty of Medicine students.">
+    <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Bandage Exams">
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&amp;display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- VIEW 1: EXAM SELECTION -->
+    <div id="view-selection" class="view active">
+        <header class="brand-hero">
+            <img src="images/logo-full.png" alt="Bandage - Faculty of Medicine" class="hero-logo">
+            <button id="install-app-btn" class="btn-ghost install-app-btn" hidden>Install app</button>
+        </header>
+
+        <main class="selection-sheet">
+            <h1 class="selection-title">Select an exam</h1>
+            <div id="exam-selection-list" class="exam-choice-list"></div>
+            <button class="btn-primary proceed-btn" onclick="app.selectExamAndProceed()">Continue</button>
+            <div class="version-footer">Bandage Exams &middot; Version 2.0</div>
+        </main>
+    </div>
+
+    <!-- VIEW 2: CANDIDATE DASHBOARD -->
+    <div id="view-candidate-dashboard" class="view">
+        <div class="dashboard-layout">
+            <aside class="dash-sidebar">
+                <div class="sidebar-logo" data-go-home role="button" tabindex="0">
+                    <img src="images/logo-mark.png" alt="" class="logo-icon">
+                    <span>Bandage Exams</span>
+                </div>
+                <div class="sidebar-nav-item active-nav">
+                    <span class="nav-icon">&#9638;</span> Dashboard
+                </div>
+            </aside>
+
+            <div class="dash-main">
+                <div class="dash-header">
+                    <div class="dash-user">
+                        <span>Bandage Student</span>
+                        <button class="btn-logout" onclick="app.goHome()">Log out</button>
+                    </div>
+                    <div class="dash-avatar">
+                        <img src="images/logo-mark.png" alt="">
+                    </div>
+                </div>
+
+                <div class="dash-content-container">
+                    <h2 class="dash-page-title">Dashboard</h2>
+
+                    <div class="candidate-info-card">
+                        <div class="card-header-teal">Candidate information</div>
+                        <div class="card-grid-layout">
+                            <div class="card-avatar-col">
+                                <div class="profile-picture large-pic">
+                                    <img src="images/logo-mark.png" alt="">
+                                </div>
+                            </div>
+                            <div class="card-data-col">
+                                <table class="info-table">
+                                    <tbody>
+                                        <tr>
+                                            <td class="info-label">Candidate name</td>
+                                            <td class="info-value">Bandage Student</td>
+                                            <td class="info-label">Candidate code</td>
+                                            <td class="info-value">BANDAGE</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="info-label">Exam venue</td>
+                                            <td class="info-value">Online</td>
+                                            <td class="info-label">Username</td>
+                                            <td class="info-value">BANDAGE</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tabs-container">
+                        <div class="tab-header active-tab">Active tests</div>
+                    </div>
+                    <div class="tab-content-area">
+                        <table class="active-tests-table">
+                            <thead>
+                                <tr>
+                                    <th>Exam</th>
+                                    <th class="center-align">Closes on</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <span class="current-exam-title test-name"></span> <span class="badge-new">New</span>
+                                        <div class="test-sub"><span class="current-exam-count"></span> questions &middot; <span class="current-exam-duration"></span> minutes</div>
+                                    </td>
+                                    <td class="center-align">
+                                        <div class="close-date">No closing date</div>
+                                        <button class="btn-take-test" onclick="app.showView('view-instructions')">Take the test</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="history-banner">
+                        <span>Test history: no tests taken yet.</span>
+                        <span class="close-banner" onclick="this.parentElement.style.display='none'" role="button" aria-label="Dismiss">&times;</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW 3: INSTRUCTIONS -->
+    <div id="view-instructions" class="view">
+        <div class="top-nav-bar">
+            <img src="images/logo-mark.png" alt="" class="top-nav-mark">
+            <span class="current-exam-title top-nav-title"></span>
+        </div>
+        <div class="instructions-layout">
+            <div class="instructions-content">
+                <div class="instructions-header">Instructions</div>
+                <div class="instructions-sub">Please read the following carefully.</div>
+                <div class="instructions-body">
+                    <ol class="instructions-list">
+                        <li>Read each question carefully before answering.</li>
+                        <li>The exam consists of multiple-choice questions; choose the best answer.</li>
+                        <li>Each question has only one correct answer unless stated otherwise.</li>
+                        <li>Do not leave the exam page during the test.</li>
+                        <li>The total time is limited, so manage it wisely.</li>
+                        <li>Once you end the test you cannot go back and change your answers.</li>
+                        <li>Do not refresh the page or close the browser during the exam.</li>
+                        <li>Make sure you have a stable internet connection before you start.</li>
+                        <li>End the test only after you have reviewed all your answers.</li>
+                    </ol>
+                </div>
+                <div class="instructions-footer">
+                    <button class="btn-primary" onclick="app.showView('view-instructions-2')">Next</button>
+                </div>
+            </div>
+            <div class="candidate-profile-sidebar">
+                <div class="profile-card">
+                    <div class="profile-picture">
+                        <img src="images/logo-mark.png" alt="">
+                    </div>
+                    <div class="profile-details">
+                        <p>Candidate name: Bandage Student</p>
+                        <p>Candidate code: BANDAGE</p>
+                        <p>Username: BANDAGE</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="bottom-footer-bar">
+            <div class="company-logo">Powered by Bandage</div>
+        </div>
+    </div>
+
+    <!-- VIEW 3.5: INSTRUCTIONS 2 -->
+    <div id="view-instructions-2" class="view">
+        <div class="top-nav-bar">
+            <img src="images/logo-mark.png" alt="" class="top-nav-mark">
+            <span class="current-exam-title top-nav-title"></span>
+        </div>
+        <div class="instructions-layout">
+            <div class="instructions-content">
+                <div class="instructions-header">Instructions</div>
+                <div class="instructions-sub">Before you begin</div>
+                <div class="instructions-body">
+                    <p class="ready-line">This exam has <strong><span class="current-exam-count"></span> questions</strong> and lasts <strong><span class="current-exam-duration"></span> minutes</strong>. The timer starts as soon as you begin.</p>
+                    <p class="ready-line">Ready?</p>
+                </div>
+
+                <div class="language-selection-box">
+                    <div class="lang-controls">
+                        <label for="lang-select">Default language</label>
+                        <select id="lang-select" class="lang-select">
+                            <option>English</option>
+                        </select>
+                    </div>
+                    <div class="lang-warning">
+                        All questions appear in your default language.
+                    </div>
+                </div>
+
+                <div class="agreement-check">
+                    <label>
+                        <input type="checkbox" id="agree-checkbox"> I have read the instructions and I'm ready
+                    </label>
+                </div>
+
+                <div class="instructions-footer-split">
+                    <div class="footer-left-btns">
+                        <button class="btn-ready" onclick="app.startExam()">I am ready to begin</button>
+                        <button class="btn-outline" onclick="app.showView('view-candidate-dashboard')">Cancel</button>
+                    </div>
+                    <div class="footer-right-btns">
+                        <button class="btn-outline" onclick="app.showView('view-instructions')">Previous</button>
+                    </div>
+                </div>
+            </div>
+            <div class="candidate-profile-sidebar">
+                <div class="profile-card">
+                    <div class="profile-picture">
+                        <img src="images/logo-mark.png" alt="">
+                    </div>
+                    <div class="profile-details">
+                        <p>Candidate name: Bandage Student</p>
+                        <p>Candidate code: BANDAGE</p>
+                        <p>Username: BANDAGE</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="bottom-footer-bar">
+            <div class="company-logo">Powered by Bandage</div>
+        </div>
+    </div>
+
+    <!-- VIEW 4: MAIN EXAM -->
+    <div id="view-exam" class="view">
+        <div class="top-nav-bar">
+            <img src="images/logo-mark.png" alt="" class="top-nav-mark">
+            <span class="current-exam-title top-nav-title"></span>
+            <span class="top-nav-timer" aria-label="Time remaining"><span class="timer-text">25:00</span></span>
+        </div>
+
+        <div class="exam-layout">
+            <!-- Left side: question area -->
+            <div class="question-area">
+                <div class="question-header">
+                    <div class="q-number" id="question-number-display">Question 1</div>
+                    <div class="font-resizers" aria-label="Text size">
+                        <button class="resizer" aria-label="Smaller text">A<sup>-</sup></button>
+                        <button class="resizer" aria-label="Normal text">A</button>
+                        <button class="resizer" aria-label="Larger text">A<sup>+</sup></button>
+                    </div>
+                </div>
+
+                <div class="question-content-wrapper" id="question-content-area">
+                    <div class="watermark-overlay"></div>
+                    <div class="question-scroll-content">
+                        <div class="q-text" id="q-text"></div>
+                        <div class="q-image-container" id="q-image-container" style="display:none;">
+                            <img src="" alt="Question image" id="q-image">
+                        </div>
+                        <div class="options-list" id="options-list"></div>
+                    </div>
+                </div>
+
+                <div class="bottom-toolbar">
+                    <div class="toolbar-left">
+                        <button class="btn-primary" onclick="app.saveAndNext()">Save &amp; next</button>
+                        <label class="mark-review-label">
+                            <input type="checkbox" id="mark-review-check" onchange="app.toggleReview()"> Mark for review
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right side: sidebar -->
+            <div class="exam-sidebar">
+                <div class="sidebar-top">
+                    <div class="sidebar-profile-pic">
+                        <img src="images/logo-mark.png" alt="">
+                    </div>
+                    <div class="timer-box">
+                        <div>Time remaining</div>
+                        <div class="timer-display"><span class="timer-text">25:00</span></div>
+                    </div>
+                </div>
+
+                <div class="user-id-bar">User: BANDAGE</div>
+
+                <div class="stats-panel">
+                    <div class="stats-header">Number of questions: <span id="total-q-count">25</span></div>
+                    <div class="stats-grid">
+                        <div class="stat-item"><span class="badge badge-answered" id="stat-answered">0</span> Answered</div>
+                        <div class="stat-item"><span class="badge badge-not-answered" id="stat-not-answered">1</span> Not answered</div>
+                        <div class="stat-item"><span class="badge badge-not-visited" id="stat-not-visited">9</span> Not visited</div>
+                    </div>
+                </div>
+
+                <div class="question-palette">
+                    <div class="palette-grid" id="palette-grid"></div>
+                </div>
+
+                <div class="sidebar-buttons">
+                    <button class="btn-end-test" id="end-test-btn" onclick="app.endTest()" disabled>End test</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Confirm end test modal -->
+        <div id="end-test-modal" class="modal-overlay" style="display: none;">
+            <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="end-test-title">
+                <div class="modal-header">
+                    <h3 id="end-test-title">End the test?</h3>
+                    <span class="modal-close" onclick="app.closeEndTestModal()" role="button" aria-label="Close">&times;</span>
+                </div>
+                <div class="modal-body">
+                    You have attempted <span id="modal-attempted-count">0</span> question(s) out of <span id="modal-total-count">0</span>. Once the test ends, you will not be able to solve it again. Do you really want to end the test?
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-confirm-no" onclick="app.closeEndTestModal()">No</button>
+                    <button class="btn-confirm-yes" onclick="app.confirmEndTest()">Yes, end test</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW 5: RESULTS -->
+    <div id="view-completion" class="view">
+        <div class="dashboard-layout">
+            <aside class="dash-sidebar">
+                <div class="sidebar-logo" data-go-home role="button" tabindex="0">
+                    <img src="images/logo-mark.png" alt="" class="logo-icon">
+                    <span>Bandage Exams</span>
+                </div>
+                <div class="sidebar-nav-item" data-go-home role="button" tabindex="0">
+                    <span class="nav-icon">&#8962;</span> Home
+                </div>
+            </aside>
+
+            <div class="dash-main">
+                <div class="dash-header">
+                    <div class="dash-user">
+                        <span>Bandage Student</span>
+                        <button class="btn-logout" onclick="app.goHome()">Log out</button>
+                    </div>
+                    <div class="dash-avatar">
+                        <img src="images/logo-mark.png" alt="">
+                    </div>
+                </div>
+
+                <div class="dash-content">
+                    <h2 class="results-heading">Exam completed</h2>
+                    <div id="results-container" class="results-container">
+                        <div class="results-summary-card">
+                            <h3 class="results-title">Your results</h3>
+                            <p><strong>Total questions:</strong> <span id="res-total">0</span></p>
+                            <p><strong>Attempted:</strong> <span id="res-attempted">0</span></p>
+                            <p class="results-correct"><strong>Correct answers:</strong> <span id="res-correct">0</span></p>
+                            <p class="results-incorrect"><strong>Incorrect answers:</strong> <span id="res-incorrect">0</span></p>
+                            <h2 class="results-score">Score: <span id="res-score">0</span>%</h2>
+                            <button class="btn-primary results-home-btn" onclick="app.goHome()">Back to exams</button>
+                        </div>
+
+                        <div class="lecture-strength-card">
+                            <h3 class="results-title">Lecture strength</h3>
+                            <div class="strength-columns">
+                                <div class="strength-column">
+                                    <h4 class="strength-label strong-label">Strong</h4>
+                                    <ul id="strong-lectures" class="strength-list"></ul>
+                                </div>
+                                <div class="strength-column">
+                                    <h4 class="strength-label intermediate-label">Intermediate</h4>
+                                    <ul id="intermediate-lectures" class="strength-list"></ul>
+                                </div>
+                                <div class="strength-column">
+                                    <h4 class="strength-label weak-label">Weak</h4>
+                                    <ul id="weak-lectures" class="strength-list"></ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="lecture-review-card">
+                            <h3 class="results-title">Lecture review</h3>
+                            <div id="lecture-review-list" class="lecture-review-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/exams-data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
