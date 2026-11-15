@@ -15,8 +15,8 @@ jobs:
 
       - name: Extract ZIP
         run: |
-          unzip -o "your-file.zip" -d .
-          rm "your-file.zip"
+          unzip -o "bandage-exams.zip" -d .
+          rm "bandage-exams.zip"
 
       - name: Commit extracted files
         run: |
